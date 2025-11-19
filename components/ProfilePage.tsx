@@ -20,6 +20,9 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<TabType>('income');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   // Income Streams State
   const [incomeStreams, setIncomeStreams] = useState<Array<{ source: string; amount: number }>>([]);
@@ -75,7 +78,10 @@ export default function ProfilePage() {
 
     const familyId = family.id || (family as any)._id;
     if (!familyId) {
-      alert('Error: Family ID not found. Please log in again.');
+      setToastMessage('Error: Family ID not found. Please log in again.');
+      setToastType('error');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
       return;
     }
 
@@ -111,14 +117,23 @@ export default function ProfilePage() {
         setProperties(validProperties);
         setLoans(validLoans);
         
-        alert('Profile saved successfully!');
+        setToastMessage('Profile saved successfully! ✨');
+        setToastType('success');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
       } else {
         const error = await res.json();
-        alert(`Failed to save: ${error.error || 'Unknown error'}`);
+        setToastMessage(`Failed to save: ${error.error || 'Unknown error'}`);
+        setToastType('error');
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
       }
     } catch (error) {
       console.error('Error saving profile:', error);
-      alert('Failed to save profile');
+      setToastMessage('Failed to save profile. Please try again.');
+      setToastType('error');
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 3000);
     } finally {
       setSaving(false);
     }
@@ -194,8 +209,22 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      {/* Toast Notification */}
+      {showToast && (
+        <div className={`fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-2xl border-2 transform transition-all duration-300 ${
+          toastType === 'success' 
+            ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-400 text-green-800' 
+            : 'bg-gradient-to-r from-red-50 to-rose-50 border-red-400 text-red-800'
+        } animate-slideIn`}>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">{toastType === 'success' ? '✅' : '❌'}</span>
+            <span className="font-semibold">{toastMessage}</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md shadow-sm border-b border-indigo-100">
+      <header className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 backdrop-blur-md shadow-sm border-b border-indigo-100">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <img src="/logo.png" alt="Bull's Eye Logo" className="w-14 h-14 object-contain" />
