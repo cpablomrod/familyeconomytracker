@@ -22,6 +22,11 @@ export interface ILoan {
   endDate: Date;
 }
 
+export interface IEconomicTarget {
+  description: string;
+  targetAmount: number;
+}
+
 export interface IFamily {
   _id?: string;
   name: string;
@@ -34,6 +39,7 @@ export interface IFamily {
   fixedPayments?: IFixedPayment[];
   properties?: IProperty[];
   loans?: ILoan[];
+  economicTargets?: IEconomicTarget[];
   createdAt: Date;
 }
 
@@ -94,6 +100,13 @@ const FamilySchema = new Schema<IFamily>({
       name: { type: String, required: true },
       monthlyAmount: { type: Number, required: true },
       endDate: { type: Date, required: true },
+    }],
+    default: [],
+  },
+  economicTargets: {
+    type: [{
+      description: { type: String, required: true },
+      targetAmount: { type: Number, required: true },
     }],
     default: [],
   },

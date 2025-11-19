@@ -37,6 +37,7 @@ export async function GET(request: Request) {
       fixedPayments: family.fixedPayments || [],
       properties: family.properties || [],
       loans: family.loans || [],
+      economicTargets: family.economicTargets || [],
     };
 
     return NextResponse.json({ family: familyData }, { status: 200 });
@@ -52,7 +53,7 @@ export async function GET(request: Request) {
 // PUT update family profile
 export async function PUT(request: Request) {
   try {
-    const { familyId, incomeStreams, fixedPayments, properties, loans } = await request.json();
+    const { familyId, incomeStreams, fixedPayments, properties, loans, economicTargets } = await request.json();
 
     if (!familyId) {
       return NextResponse.json(
@@ -68,6 +69,7 @@ export async function PUT(request: Request) {
     if (fixedPayments !== undefined) updateData.fixedPayments = fixedPayments;
     if (properties !== undefined) updateData.properties = properties;
     if (loans !== undefined) updateData.loans = loans;
+    if (economicTargets !== undefined) updateData.economicTargets = economicTargets;
 
     const family = await Family.findByIdAndUpdate(
       familyId,
@@ -93,6 +95,7 @@ export async function PUT(request: Request) {
       fixedPayments: family.fixedPayments || [],
       properties: family.properties || [],
       loans: family.loans || [],
+      economicTargets: family.economicTargets || [],
     };
 
     return NextResponse.json(

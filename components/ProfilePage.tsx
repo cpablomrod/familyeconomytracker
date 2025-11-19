@@ -10,9 +10,10 @@ interface Family {
   fixedPayments?: Array<{ name: string; amount: number }>;
   properties?: Array<{ name: string; value: number; monthlyPayment?: number }>;
   loans?: Array<{ name: string; monthlyAmount: number; endDate: string }>;
+  economicTargets?: Array<{ description: string; targetAmount: number }>;
 }
 
-type TabType = 'income' | 'payments' | 'properties' | 'loans';
+type TabType = 'income' | 'payments' | 'properties' | 'loans' | 'targets';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -35,6 +36,9 @@ export default function ProfilePage() {
   
   // Loans State
   const [loans, setLoans] = useState<Array<{ name: string; monthlyAmount: number; endDate: string }>>([]);
+  
+  // Economic Targets State
+  const [economicTargets, setEconomicTargets] = useState<Array<{ description: string; targetAmount: number }>>([]);
 
   useEffect(() => {
     const familyData = localStorage.getItem('currentFamily');
@@ -65,6 +69,7 @@ export default function ProfilePage() {
         setFixedPayments(data.family.fixedPayments || []);
         setProperties(data.family.properties || []);
         setLoans(data.family.loans || []);
+        setEconomicTargets(data.family.economicTargets || []);
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
@@ -90,6 +95,7 @@ export default function ProfilePage() {
     const validFixedPayments = fixedPayments.filter(p => p.name && p.name.trim() && p.amount > 0);
     const validProperties = properties.filter(p => p.name && p.name.trim() && p.value > 0);
     const validLoans = loans.filter(l => l.name && l.name.trim() && l.monthlyAmount > 0 && l.endDate);
+    const validEconomicTargets = economicTargets.filter(t => t.description && t.description.trim() && t.targetAmount > 0);
 
     setSaving(true);
     try {
@@ -102,6 +108,7 @@ export default function ProfilePage() {
           fixedPayments: validFixedPayments,
           properties: validProperties,
           loans: validLoans,
+          economicTargets: validEconomicTargets,
         }),
       });
 
@@ -116,6 +123,7 @@ export default function ProfilePage() {
         setFixedPayments(validFixedPayments);
         setProperties(validProperties);
         setLoans(validLoans);
+        setEconomicTargets(validEconomicTargets);
         
         setToastMessage('Profile saved successfully! ✨');
         setToastType('success');
@@ -197,6 +205,34 @@ export default function ProfilePage() {
 
   const removeLoan = (index: number) => {
     setLoans(loans.filter((_, i) => i !== index));
+  };
+
+  // Economic Targets Functions
+  const targetHints = [
+    'Save for new car',
+    'Save for college',
+    'Emergency fund',
+    'Reduce dining out budget',
+    'Vacation fund',
+    'Home down payment',
+    'Retirement savings',
+    'Debt payoff goal',
+    'Medical expenses fund',
+    'Wedding savings',
+  ];
+
+  const addEconomicTarget = () => {
+    setEconomicTargets([...economicTargets, { description: '', targetAmount: 0 }]);
+  };
+
+  const updateEconomicTarget = (index: number, field: 'description' | 'targetAmount', value: string | number) => {
+    const updated = [...economicTargets];
+    updated[index] = { ...updated[index], [field]: value };
+    setEconomicTargets(updated);
+  };
+
+  const removeEconomicTarget = (index: number) => {
+    setEconomicTargets(economicTargets.filter((_, i) => i !== index));
   };
 
   if (loading || !family) {
@@ -291,6 +327,16 @@ export default function ProfilePage() {
               }`}
             >
               💸 Loans
+            </button>
+            <button
+              onClick={() => setActiveTab('targets')}
+              className={`px-6 py-3 font-semibold transition border-b-2 ${
+                activeTab === 'targets'
+                  ? 'border-indigo-600 text-indigo-600'
+                  : 'border-transparent text-gray-600 hover:text-indigo-600'
+              }`}
+            >
+              🎯 Economic Targets
             </button>
           </div>
 
@@ -505,6 +551,60 @@ export default function ProfilePage() {
                       />
                       <button
                         onClick={() => removeLoan(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          )}
+
+          {/* Economic Targets Tab */}
+          {activeTab === 'targets' && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Economic Targets</h3>
+                <button
+                  onClick={addEconomicTarget}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                >
+                  + Add Target
+                </button>
+              </div>
+
+              {economicTargets.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No economic targets set yet. Click "+ Add Target" to get started!</p>
+              ) : (
+                economicTargets.map((target, index) => {
+                  const isComplete = target.description && target.description.trim() && target.targetAmount > 0;
+                  const randomHint = targetHints[Math.floor(Math.random() * targetHints.length)];
+                  return (
+                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                      isComplete 
+                        ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-300 shadow-md' 
+                        : 'bg-gray-50 border-gray-200 border-dashed'
+                    }`}>
+                      {isComplete && <span className="text-2xl">✅</span>}
+                      <input
+                        type="text"
+                        placeholder={randomHint}
+                        value={target.description}
+                        onChange={(e) => updateEconomicTarget(index, 'description', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        title={`e.g., ${targetHints.slice(0, 3).join(', ')}`}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Target Amount"
+                        value={target.targetAmount || ''}
+                        onChange={(e) => updateEconomicTarget(index, 'targetAmount', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => removeEconomicTarget(index)}
                         className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
                       >
                         Remove

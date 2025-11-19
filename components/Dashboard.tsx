@@ -17,6 +17,7 @@ interface Family {
   fixedPayments?: Array<{ name: string; amount: number }>;
   properties?: Array<{ name: string; value: number; monthlyPayment?: number }>;
   loans?: Array<{ name: string; monthlyAmount: number; endDate: string }>;
+  economicTargets?: Array<{ description: string; targetAmount: number }>;
 }
 
 interface Expense {
@@ -528,7 +529,75 @@ export default function Dashboard() {
               {viewMode === 'monthly' ? 'Monthly' : 'Yearly'} Financial Health
             </h2>
             
-            <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
+            <div className="flex flex-col lg:flex-row items-start justify-center gap-12">
+              {/* Economic Targets - Left Side */}
+              <div className="space-y-4 min-w-[300px] max-w-[350px]">
+                <h3 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-2">
+                  🎯 Economic Targets
+                </h3>
+                {(!family?.economicTargets || family.economicTargets.length === 0) ? (
+                  <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
+                    <p className="text-gray-500 text-center text-sm">
+                      No targets set yet. Add them in your profile!
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {family.economicTargets.map((target, index) => {
+                      // Calculate current savings based on monthly balance
+                      const currentSavings = financials.monthlyBalance > 0 
+                        ? Math.min(financials.monthlyBalance, target.targetAmount) 
+                        : 0;
+                      const progress = (currentSavings / target.targetAmount) * 100;
+                      const isComplete = progress >= 100;
+
+                      return (
+                        <div 
+                          key={index} 
+                          className={`p-4 rounded-xl border-2 transition-all ${
+                            isComplete 
+                              ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-300 shadow-md'
+                              : 'bg-white border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-start gap-2 flex-1">
+                              {isComplete && <span className="text-xl">✅</span>}
+                              <div className="flex-1">
+                                <p className="font-semibold text-gray-900 text-sm leading-tight">
+                                  {target.description}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Target: €{target.targetAmount.toFixed(0)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          {!isComplete && (
+                            <div className="mt-3">
+                              <div className="flex justify-between text-xs text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span className="font-bold">{progress.toFixed(0)}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+                                <div 
+                                  className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-teal-500 to-cyan-500"
+                                  style={{ width: `${Math.min(progress, 100)}%` }}
+                                ></div>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">
+                                €{currentSavings.toFixed(0)} / €{target.targetAmount.toFixed(0)}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* Circle Chart */}
               <div className="relative" style={{ width: '400px', height: '400px' }}>
                 <svg className="transform -rotate-90" width="400" height="400" viewBox="0 0 400 400">
