@@ -279,32 +279,40 @@ export default function ProfilePage() {
               </div>
 
               {incomeStreams.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No income streams added yet.</p>
+                <p className="text-center text-gray-500 py-8">No income streams added yet. Click "+ Add Income" to get started!</p>
               ) : (
-                incomeStreams.map((stream, index) => (
-                  <div key={index} className="flex gap-4 items-center p-4 bg-gray-50 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Source (e.g., Salary, Freelance)"
-                      value={stream.source}
-                      onChange={(e) => updateIncomeStream(index, 'source', e.target.value)}
-                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      value={stream.amount || ''}
-                      onChange={(e) => updateIncomeStream(index, 'amount', parseFloat(e.target.value) || 0)}
-                      className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <button
-                      onClick={() => removeIncomeStream(index)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))
+                incomeStreams.map((stream, index) => {
+                  const isComplete = stream.source && stream.source.trim() && stream.amount > 0;
+                  return (
+                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                      isComplete 
+                        ? 'bg-gradient-to-r from-green-50 to-emerald-50 border-green-300 shadow-md' 
+                        : 'bg-gray-50 border-gray-200 border-dashed'
+                    }`}>
+                      {isComplete && <span className="text-2xl">✅</span>}
+                      <input
+                        type="text"
+                        placeholder="Source (e.g., Salary, Freelance)"
+                        value={stream.source}
+                        onChange={(e) => updateIncomeStream(index, 'source', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Amount"
+                        value={stream.amount || ''}
+                        onChange={(e) => updateIncomeStream(index, 'amount', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => removeIncomeStream(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
               )}
             </div>
           )}
@@ -323,32 +331,40 @@ export default function ProfilePage() {
               </div>
 
               {fixedPayments.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No fixed payments added yet.</p>
+                <p className="text-center text-gray-500 py-8">No fixed payments added yet. Click "+ Add Payment" to get started!</p>
               ) : (
-                fixedPayments.map((payment, index) => (
-                  <div key={index} className="flex gap-4 items-center p-4 bg-gray-50 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Payment name (e.g., Rent, Insurance)"
-                      value={payment.name}
-                      onChange={(e) => updateFixedPayment(index, 'name', e.target.value)}
-                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Amount"
-                      value={payment.amount || ''}
-                      onChange={(e) => updateFixedPayment(index, 'amount', parseFloat(e.target.value) || 0)}
-                      className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <button
-                      onClick={() => removeFixedPayment(index)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))
+                fixedPayments.map((payment, index) => {
+                  const isComplete = payment.name && payment.name.trim() && payment.amount > 0;
+                  return (
+                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                      isComplete 
+                        ? 'bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-300 shadow-md' 
+                        : 'bg-gray-50 border-gray-200 border-dashed'
+                    }`}>
+                      {isComplete && <span className="text-2xl">✅</span>}
+                      <input
+                        type="text"
+                        placeholder="Payment name (e.g., Rent, Insurance)"
+                        value={payment.name}
+                        onChange={(e) => updateFixedPayment(index, 'name', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Amount"
+                        value={payment.amount || ''}
+                        onChange={(e) => updateFixedPayment(index, 'amount', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => removeFixedPayment(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
               )}
             </div>
           )}
@@ -367,39 +383,47 @@ export default function ProfilePage() {
               </div>
 
               {properties.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No properties added yet.</p>
+                <p className="text-center text-gray-500 py-8">No properties added yet. Click "+ Add Property" to get started!</p>
               ) : (
-                properties.map((property, index) => (
-                  <div key={index} className="flex gap-4 items-center p-4 bg-gray-50 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Property name"
-                      value={property.name}
-                      onChange={(e) => updateProperty(index, 'name', e.target.value)}
-                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Value"
-                      value={property.value || ''}
-                      onChange={(e) => updateProperty(index, 'value', parseFloat(e.target.value) || 0)}
-                      className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Monthly Payment"
-                      value={property.monthlyPayment || ''}
-                      onChange={(e) => updateProperty(index, 'monthlyPayment', parseFloat(e.target.value) || 0)}
-                      className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <button
-                      onClick={() => removeProperty(index)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))
+                properties.map((property, index) => {
+                  const isComplete = property.name && property.name.trim() && property.value > 0;
+                  return (
+                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                      isComplete 
+                        ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-300 shadow-md' 
+                        : 'bg-gray-50 border-gray-200 border-dashed'
+                    }`}>
+                      {isComplete && <span className="text-2xl">✅</span>}
+                      <input
+                        type="text"
+                        placeholder="Property name"
+                        value={property.name}
+                        onChange={(e) => updateProperty(index, 'name', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Value"
+                        value={property.value || ''}
+                        onChange={(e) => updateProperty(index, 'value', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Monthly Payment"
+                        value={property.monthlyPayment || ''}
+                        onChange={(e) => updateProperty(index, 'monthlyPayment', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => removeProperty(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
               )}
             </div>
           )}
@@ -418,39 +442,47 @@ export default function ProfilePage() {
               </div>
 
               {loans.length === 0 ? (
-                <p className="text-center text-gray-500 py-8">No loans added yet.</p>
+                <p className="text-center text-gray-500 py-8">No loans added yet. Click "+ Add Loan" to get started!</p>
               ) : (
-                loans.map((loan, index) => (
-                  <div key={index} className="flex gap-4 items-center p-4 bg-gray-50 rounded-lg">
-                    <input
-                      type="text"
-                      placeholder="Loan name"
-                      value={loan.name}
-                      onChange={(e) => updateLoan(index, 'name', e.target.value)}
-                      className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="number"
-                      placeholder="Monthly Amount"
-                      value={loan.monthlyAmount || ''}
-                      onChange={(e) => updateLoan(index, 'monthlyAmount', parseFloat(e.target.value) || 0)}
-                      className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <input
-                      type="date"
-                      placeholder="End Date"
-                      value={loan.endDate}
-                      onChange={(e) => updateLoan(index, 'endDate', e.target.value)}
-                      className="w-48 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                    />
-                    <button
-                      onClick={() => removeLoan(index)}
-                      className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))
+                loans.map((loan, index) => {
+                  const isComplete = loan.name && loan.name.trim() && loan.monthlyAmount > 0 && loan.endDate;
+                  return (
+                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                      isComplete 
+                        ? 'bg-gradient-to-r from-amber-50 to-yellow-50 border-amber-300 shadow-md' 
+                        : 'bg-gray-50 border-gray-200 border-dashed'
+                    }`}>
+                      {isComplete && <span className="text-2xl">✅</span>}
+                      <input
+                        type="text"
+                        placeholder="Loan name"
+                        value={loan.name}
+                        onChange={(e) => updateLoan(index, 'name', e.target.value)}
+                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="number"
+                        placeholder="Monthly Amount"
+                        value={loan.monthlyAmount || ''}
+                        onChange={(e) => updateLoan(index, 'monthlyAmount', parseFloat(e.target.value) || 0)}
+                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <input
+                        type="date"
+                        placeholder="End Date"
+                        value={loan.endDate}
+                        onChange={(e) => updateLoan(index, 'endDate', e.target.value)}
+                        className="w-48 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                      />
+                      <button
+                        onClick={() => removeLoan(index)}
+                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })
               )}
             </div>
           )}

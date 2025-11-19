@@ -973,6 +973,9 @@ export default function Dashboard() {
                         <option value="water">💧 Water</option>
                         <option value="candies">🍬 Candies</option>
                         <option value="pancakes">🥞 Pancakes</option>
+                        <option value="cheese">🧀 Cheese</option>
+                        <option value="jam">🍯 Jam</option>
+                        <option value="cereals">🥣 Cereals</option>
                         <option value="protein">🥤 Protein</option>
                         <option value="drinks">🥤 Drinks</option>
                         <option value="other">🍽️ Other</option>
