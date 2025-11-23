@@ -126,12 +126,16 @@ export default function Dashboard() {
 
     setSubmitting(true);
     
-    const dateString = selectedDate.toISOString().split('T')[0];
+    // Format date as YYYY-MM-DD using local time to avoid timezone shift
+    const year = selectedDate.getFullYear();
+    const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(selectedDate.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${day}`;
+    
     console.log('Adding expense for date:', {
       selectedDate: selectedDate.toString(),
       dateString,
-      localDate: selectedDate.toLocaleDateString(),
-      utcDate: selectedDate.toUTCString()
+      year, month, day
     });
 
     try {
@@ -181,7 +185,10 @@ export default function Dashboard() {
 
   const isToday = (dateString: string) => {
     const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const todayStr = `${year}-${month}-${day}`;
     return dateString === todayStr;
   };
 
