@@ -321,7 +321,7 @@ export default function Dashboard() {
     // Center text - Balance
     doc.setFontSize(16);
     doc.setTextColor(balance >= 0 ? 22 : 239, balance >= 0 ? 163 : 68, balance >= 0 ? 74 : 68);
-    doc.text(`$${Math.abs(balance).toFixed(0)}`, centerX, centerY, { align: 'center' });
+    doc.text(`€${Math.abs(balance).toFixed(0)}`, centerX, centerY, { align: 'center' });
     doc.setFontSize(10);
     doc.setTextColor(100, 100, 100);
     doc.text(balance >= 0 ? 'Balance' : 'Deficit', centerX, centerY + 7, { align: 'center' });
@@ -338,7 +338,7 @@ export default function Dashboard() {
     doc.text('Total Income', 25, yPos + 8);
     doc.setFontSize(14);
     doc.setTextColor(22, 163, 74);
-    doc.text(`$${monthlyIncome.toFixed(2)}`, 25, yPos + 16);
+    doc.text(`€${monthlyIncome.toFixed(2)}`, 25, yPos + 16);
     
     // Expenses box
     doc.setFillColor(254, 226, 226);
@@ -348,7 +348,7 @@ export default function Dashboard() {
     doc.text('Total Expenses', 115, yPos + 8);
     doc.setFontSize(14);
     doc.setTextColor(239, 68, 68);
-    doc.text(`$${totalExpenses.toFixed(2)}`, 115, yPos + 16);
+    doc.text(`€${totalExpenses.toFixed(2)}`, 115, yPos + 16);
 
     yPos += 35;
 
@@ -362,7 +362,7 @@ export default function Dashboard() {
       .sort((a, b) => b[1] - a[1])
       .map(([category, amount]) => [
         category.charAt(0).toUpperCase() + category.slice(1),
-        `$${amount.toFixed(2)}`
+        `€${amount.toFixed(2)}`
       ]);
 
     autoTable(doc, {
@@ -386,7 +386,7 @@ export default function Dashboard() {
       new Date(expense.date).toLocaleDateString(),
       expense.description,
       expense.category.charAt(0).toUpperCase() + expense.category.slice(1),
-      `$${expense.amount.toFixed(2)}`
+      `€${expense.amount.toFixed(2)}`
     ]);
 
     autoTable(doc, {
@@ -648,7 +648,7 @@ export default function Dashboard() {
                     <p className={`text-6xl font-bold ${
                       financials.monthlyBalance >= 0 ? 'text-green-600' : 'text-red-600'
                     }`}>
-                      ${Math.abs(financials.monthlyBalance).toFixed(0)}
+                      €{Math.abs(financials.monthlyBalance).toFixed(0)}
                     </p>
                   </div>
                 </div>
@@ -660,7 +660,7 @@ export default function Dashboard() {
                   <div className="w-6 h-6 rounded-full bg-green-500 opacity-30"></div>
                   <div className="flex-1">
                     <p className="text-sm text-gray-600">Total Income</p>
-                    <p className="text-2xl font-bold text-gray-900">${financials.totalIncome.toFixed(2)}</p>
+                    <p className="text-2xl font-bold text-gray-900">€{financials.totalIncome.toFixed(2)}</p>
                   </div>
                 </div>
                 
@@ -671,7 +671,7 @@ export default function Dashboard() {
                   <div className="flex-1">
                     <p className="text-sm text-gray-600">Total Outgoing</p>
                     <p className="text-2xl font-bold text-gray-900">
-                      ${(financials.totalIncome - financials.monthlyBalance).toFixed(2)}
+                      €{(financials.totalIncome - financials.monthlyBalance).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -783,7 +783,7 @@ export default function Dashboard() {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="bg-white/80 rounded-lg p-4">
                             <p className="text-sm text-gray-600 mb-1">Total Expenses</p>
-                            <p className="text-3xl font-bold text-indigo-600">${totalExpenses.toFixed(2)}</p>
+                            <p className="text-3xl font-bold text-indigo-600">€{totalExpenses.toFixed(2)}</p>
                           </div>
                           <div className="bg-white/80 rounded-lg p-4">
                             <p className="text-sm text-gray-600 mb-1">Number of Transactions</p>
@@ -801,7 +801,7 @@ export default function Dashboard() {
                                 <span className="text-2xl">{categoryEmojis[category]}</span>
                                 <span className="font-semibold capitalize">{category}</span>
                               </div>
-                              <span className="text-lg font-bold text-indigo-600">${amount.toFixed(2)}</span>
+                              <span className="text-lg font-bold text-indigo-600">€{amount.toFixed(2)}</span>
                             </div>
                           ))}
                         </div>
@@ -825,7 +825,7 @@ export default function Dashboard() {
                                     </div>
                                   </div>
                                 </div>
-                                <span className="text-lg font-bold text-indigo-600">${expense.amount.toFixed(2)}</span>
+                                <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
                               </div>
                             ))
                           )}
@@ -946,7 +946,7 @@ export default function Dashboard() {
                     >
                       <div className="text-sm font-semibold">{day}</div>
                       {dayTotal > 0 && !isFuture && (
-                        <div className="text-xs mt-1">${dayTotal.toFixed(0)}</div>
+                        <div className="text-xs mt-1">€{dayTotal.toFixed(0)}</div>
                       )}
                     </button>
                   );
@@ -1188,7 +1188,7 @@ export default function Dashboard() {
                               </div>
                               <div className="flex items-center gap-3">
                                 <span className="text-lg font-bold text-indigo-600">
-                                  ${expense.amount.toFixed(2)}
+                                  €{expense.amount.toFixed(2)}
                                 </span>
                                 <button
                                   onClick={() => handleDeleteExpense(expense._id)}

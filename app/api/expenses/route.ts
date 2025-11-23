@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 // POST create new expense
 export async function POST(request: Request) {
   try {
-    const { familyId, date, amount, category, description } = await request.json();
+    const { familyId, date, amount, category, subcategory, description } = await request.json();
 
     // Validate input
     if (!familyId || !date || !amount || !category || !description) {
@@ -49,6 +49,7 @@ export async function POST(request: Request) {
       date: new Date(date),
       amount,
       category,
+      subcategory,
       description,
     });
 
