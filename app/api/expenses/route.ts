@@ -44,19 +44,12 @@ export async function POST(request: Request) {
 
     await connectDB();
 
-    // Parse date as UTC to avoid timezone shifts
-    const [year, month, day] = date.split('-').map(Number);
-    const utcDate = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
-    
-    console.log('Creating expense:', {
-      inputDate: date,
-      parsedDate: utcDate.toISOString(),
-      year, month, day
-    });
+    // Store date as string (YYYY-MM-DD) to completely avoid timezone issues
+    console.log('Creating expense with date string:', date);
 
     const expense = await Expense.create({
       familyId,
-      date: utcDate,
+      date: date, // Store as-is: YYYY-MM-DD string
       amount,
       category,
       subcategory,

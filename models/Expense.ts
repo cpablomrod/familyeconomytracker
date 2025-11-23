@@ -3,7 +3,7 @@ import mongoose, { Schema, Model } from 'mongoose';
 export interface IExpense {
   _id?: string;
   familyId: string;
-  date: Date;
+  date: string; // Store as YYYY-MM-DD string to avoid timezone issues
   amount: number;
   category: string;
   subcategory?: string;
@@ -18,7 +18,7 @@ const ExpenseSchema = new Schema<IExpense>({
     index: true,
   },
   date: {
-    type: Date,
+    type: String,
     required: [true, 'Date is required'],
   },
   amount: {

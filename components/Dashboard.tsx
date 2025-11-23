@@ -181,10 +181,8 @@ export default function Dashboard() {
 
   const isToday = (dateString: string) => {
     const today = new Date();
-    const date = new Date(dateString);
-    return date.getUTCFullYear() === today.getFullYear() &&
-           date.getUTCMonth() === today.getMonth() &&
-           date.getUTCDate() === today.getDate();
+    const todayStr = today.toISOString().split('T')[0];
+    return dateString === todayStr;
   };
 
   const isThisWeek = (dateString: string) => {
@@ -196,14 +194,14 @@ export default function Dashboard() {
 
   const isThisMonth = (dateString: string) => {
     const today = new Date();
-    const date = new Date(dateString);
-    return date.getUTCMonth() === today.getMonth() && date.getUTCFullYear() === today.getFullYear();
+    const [year, month] = dateString.split('-');
+    return parseInt(month) === (today.getMonth() + 1) && parseInt(year) === today.getFullYear();
   };
 
   const isThisYear = (dateString: string) => {
     const today = new Date();
-    const date = new Date(dateString);
-    return date.getUTCFullYear() === today.getFullYear();
+    const [year] = dateString.split('-');
+    return parseInt(year) === today.getFullYear();
   };
 
   const calculateTotals = () => {
@@ -261,8 +259,8 @@ export default function Dashboard() {
 
   const generatePDFReport = (month: number, year: number) => {
     const selectedExpenses = expenses.filter(e => {
-      const expenseDate = new Date(e.date);
-      return expenseDate.getUTCMonth() === month && expenseDate.getUTCFullYear() === year;
+      const [expYear, expMonth] = e.date.split('-');
+      return parseInt(expMonth) === (month + 1) && parseInt(expYear) === year;
     });
 
     const totalExpenses = selectedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -771,8 +769,8 @@ export default function Dashboard() {
 
                 {(() => {
                   const selectedExpenses = expenses.filter(e => {
-                    const expenseDate = new Date(e.date);
-                    return expenseDate.getUTCMonth() === reportMonth && expenseDate.getUTCFullYear() === reportYear;
+                    const [expYear, expMonth] = e.date.split('-');
+                    return parseInt(expMonth) === (reportMonth + 1) && parseInt(expYear) === reportYear;
                   });
 
                   const totalExpenses = selectedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -926,12 +924,8 @@ export default function Dashboard() {
                   const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
                   
                   // Count expenses for this day
-                  const dayExpenses = expenses.filter(e => {
-                    const expenseDate = new Date(e.date);
-                    return expenseDate.getUTCFullYear() === date.getFullYear() &&
-                           expenseDate.getUTCMonth() === date.getMonth() &&
-                           expenseDate.getUTCDate() === date.getDate();
-                  });
+                  const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                  const dayExpenses = expenses.filter(e => e.date === dateStr);
                   const dayTotal = dayExpenses.reduce((sum, e) => sum + e.amount, 0);
 
                   days.push(
@@ -1171,12 +1165,8 @@ export default function Dashboard() {
 
                 {/* Show expenses for selected day */}
                 {(() => {
-                  const dayExpenses = expenses.filter(e => {
-                    const expenseDate = new Date(e.date);
-                    return expenseDate.getUTCFullYear() === selectedDate.getFullYear() &&
-                           expenseDate.getUTCMonth() === selectedDate.getMonth() &&
-                           expenseDate.getUTCDate() === selectedDate.getDate();
-                  });
+                  const selectedDateStr = `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}`;
+                  const dayExpenses = expenses.filter(e => e.date === selectedDateStr);
 
                   if (dayExpenses.length > 0) {
                     return (
