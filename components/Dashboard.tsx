@@ -174,7 +174,9 @@ export default function Dashboard() {
   const isToday = (dateString: string) => {
     const today = new Date();
     const date = new Date(dateString);
-    return date.toDateString() === today.toDateString();
+    return date.getUTCFullYear() === today.getFullYear() &&
+           date.getUTCMonth() === today.getMonth() &&
+           date.getUTCDate() === today.getDate();
   };
 
   const isThisWeek = (dateString: string) => {
@@ -187,13 +189,13 @@ export default function Dashboard() {
   const isThisMonth = (dateString: string) => {
     const today = new Date();
     const date = new Date(dateString);
-    return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+    return date.getUTCMonth() === today.getMonth() && date.getUTCFullYear() === today.getFullYear();
   };
 
   const isThisYear = (dateString: string) => {
     const today = new Date();
     const date = new Date(dateString);
-    return date.getFullYear() === today.getFullYear();
+    return date.getUTCFullYear() === today.getFullYear();
   };
 
   const calculateTotals = () => {
@@ -252,7 +254,7 @@ export default function Dashboard() {
   const generatePDFReport = (month: number, year: number) => {
     const selectedExpenses = expenses.filter(e => {
       const expenseDate = new Date(e.date);
-      return expenseDate.getMonth() === month && expenseDate.getFullYear() === year;
+      return expenseDate.getUTCMonth() === month && expenseDate.getUTCFullYear() === year;
     });
 
     const totalExpenses = selectedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -679,15 +681,15 @@ export default function Dashboard() {
                 <div className="pt-4 border-t-2 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Fixed Payments:</span>
-                    <span className="font-bold text-lg">${financials.totalFixedPayments.toFixed(2)}</span>
+                    <span className="font-bold text-lg">€{financials.totalFixedPayments.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Property/Loans:</span>
-                    <span className="font-bold text-lg">${(financials.totalPropertyPayments + financials.totalLoanPayments).toFixed(2)}</span>
+                    <span className="font-bold text-lg">€{(financials.totalPropertyPayments + financials.totalLoanPayments).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">{viewMode === 'monthly' ? 'Monthly' : 'Yearly'} Expenses:</span>
-                    <span className="font-bold text-lg">${viewMode === 'monthly' ? financials.expenseTotals.month.toFixed(2) : financials.expenseTotals.year.toFixed(2)}</span>
+                    <span className="font-bold text-lg">€{viewMode === 'monthly' ? financials.expenseTotals.month.toFixed(2) : financials.expenseTotals.year.toFixed(2)}</span>
                   </div>
                 </div>
                 
@@ -762,7 +764,7 @@ export default function Dashboard() {
                 {(() => {
                   const selectedExpenses = expenses.filter(e => {
                     const expenseDate = new Date(e.date);
-                    return expenseDate.getMonth() === reportMonth && expenseDate.getFullYear() === reportYear;
+                    return expenseDate.getUTCMonth() === reportMonth && expenseDate.getUTCFullYear() === reportYear;
                   });
 
                   const totalExpenses = selectedExpenses.reduce((sum, e) => sum + e.amount, 0);
@@ -918,7 +920,9 @@ export default function Dashboard() {
                   // Count expenses for this day
                   const dayExpenses = expenses.filter(e => {
                     const expenseDate = new Date(e.date);
-                    return expenseDate.toDateString() === date.toDateString();
+                    return expenseDate.getUTCFullYear() === date.getFullYear() &&
+                           expenseDate.getUTCMonth() === date.getMonth() &&
+                           expenseDate.getUTCDate() === date.getDate();
                   });
                   const dayTotal = dayExpenses.reduce((sum, e) => sum + e.amount, 0);
 
@@ -1161,7 +1165,9 @@ export default function Dashboard() {
                 {(() => {
                   const dayExpenses = expenses.filter(e => {
                     const expenseDate = new Date(e.date);
-                    return expenseDate.toDateString() === selectedDate.toDateString();
+                    return expenseDate.getUTCFullYear() === selectedDate.getFullYear() &&
+                           expenseDate.getUTCMonth() === selectedDate.getMonth() &&
+                           expenseDate.getUTCDate() === selectedDate.getDate();
                   });
 
                   if (dayExpenses.length > 0) {
