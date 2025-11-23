@@ -125,6 +125,14 @@ export default function Dashboard() {
     if (!familyId) return;
 
     setSubmitting(true);
+    
+    const dateString = selectedDate.toISOString().split('T')[0];
+    console.log('Adding expense for date:', {
+      selectedDate: selectedDate.toString(),
+      dateString,
+      localDate: selectedDate.toLocaleDateString(),
+      utcDate: selectedDate.toUTCString()
+    });
 
     try {
       const res = await fetch('/api/expenses', {
@@ -132,7 +140,7 @@ export default function Dashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           familyId,
-          date: selectedDate.toISOString().split('T')[0],
+          date: dateString,
           amount: parseFloat(expenseAmount),
           category: expenseCategory,
           subcategory: expenseSubcategory || undefined,
