@@ -21,6 +21,10 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "Bull's Eye Economic Target - Hit Your Money Targets",
   description: "Smart budgeting app for families. Track expenses, manage finances, and hit your money targets!",
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({
