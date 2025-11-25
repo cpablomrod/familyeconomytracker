@@ -42,6 +42,50 @@ const categoryEmojis: { [key: string]: string } = {
   'home-renovations': '🔨',
 };
 
+const subcategoryEmojis: { [key: string]: string } = {
+  // Food subcategories
+  meat: '🥩',
+  fish: '🐟',
+  chicken: '🍗',
+  rice: '🍚',
+  pasta: '🍝',
+  sauces: '🥫',
+  bread: '🥖',
+  eggs: '🥚',
+  milk: '🥛',
+  water: '💧',
+  candies: '🍬',
+  pancakes: '🥞',
+  cheese: '🧀',
+  jam: '🍯',
+  cereals: '🥣',
+  protein: '🥤',
+  drinks: '🥤',
+  // Gasoline subcategories
+  diesel: '⛽',
+  gasoline: '⛽',
+  // Utilities subcategories
+  kitchen: '🍳',
+  bathroom: '🛁',
+  housing: '🏠',
+  // Restaurant subcategories
+  breakfast: '🥐',
+  lunch: '🍲',
+  dinner: '🍴',
+  snack: '☕',
+  // Clothing subcategories
+  kids: '🧒',
+  adults: '👔',
+  baby: '👶',
+};
+
+const getExpenseIcon = (expense: Expense): string => {
+  if (expense.subcategory && subcategoryEmojis[expense.subcategory]) {
+    return subcategoryEmojis[expense.subcategory];
+  }
+  return categoryEmojis[expense.category] || '💰';
+};
+
 export default function Dashboard() {
   const router = useRouter();
   const [family, setFamily] = useState<Family | null>(null);
@@ -56,6 +100,7 @@ export default function Dashboard() {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportMonth, setReportMonth] = useState(new Date().getMonth());
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
+  const [selectedReportDate, setSelectedReportDate] = useState<string | null>(null);
 
   // Form state
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -728,8 +773,8 @@ export default function Dashboard() {
 
         {/* Monthly Report Modal */}
         {showReportModal && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setShowReportModal(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowReportModal(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-7xl w-full h-[90vh] flex flex-col" onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
                   📊 Monthly Report
@@ -742,37 +787,40 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      📅 Select Month
-                    </label>
-                    <select
-                      value={reportMonth}
-                      onChange={(e) => setReportMonth(parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
-                    >
-                      {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
-                        <option key={idx} value={idx}>{month}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2">
-                      📆 Select Year
-                    </label>
-                    <select
-                      value={reportYear}
-                      onChange={(e) => setReportYear(parseInt(e.target.value))}
-                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
-                    >
-                      {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                        <option key={year} value={year}>{year}</option>
-                      ))}
-                    </select>
-                  </div>
+              {/* Month/Year Selector */}
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    📅 Select Month
+                  </label>
+                  <select
+                    value={reportMonth}
+                    onChange={(e) => { setReportMonth(parseInt(e.target.value)); setSelectedReportDate(null); }}
+                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                  >
+                    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
+                      <option key={idx} value={idx}>{month}</option>
+                    ))}
+                  </select>
                 </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    📆 Select Year
+                  </label>
+                  <select
+                    value={reportYear}
+                    onChange={(e) => { setReportYear(parseInt(e.target.value)); setSelectedReportDate(null); }}
+                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                  >
+                    {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                      <option key={year} value={year}>{year}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              {/* Split Panel Content */}
+              <div className="flex-1 overflow-hidden flex gap-6">
 
                 {(() => {
                   const selectedExpenses = expenses.filter(e => {
@@ -787,75 +835,150 @@ export default function Dashboard() {
                     categoryTotals[e.category] = (categoryTotals[e.category] || 0) + e.amount;
                   });
 
+                  // Group expenses by date
+                  const expensesByDate: { [key: string]: Expense[] } = {};
+                  selectedExpenses.forEach(e => {
+                    if (!expensesByDate[e.date]) {
+                      expensesByDate[e.date] = [];
+                    }
+                    expensesByDate[e.date].push(e);
+                  });
+
                   const monthName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][reportMonth];
+                  const daysInMonth = new Date(reportYear, reportMonth + 1, 0).getDate();
 
                   return (
-                    <div className="space-y-6">
-                      <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-6 border-2 border-indigo-200">
-                        <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                          {monthName} {reportYear} Summary
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="bg-white/80 rounded-lg p-4">
-                            <p className="text-sm text-gray-600 mb-1">Total Expenses</p>
-                            <p className="text-3xl font-bold text-indigo-600">€{totalExpenses.toFixed(2)}</p>
-                          </div>
-                          <div className="bg-white/80 rounded-lg p-4">
-                            <p className="text-sm text-gray-600 mb-1">Number of Transactions</p>
-                            <p className="text-3xl font-bold text-purple-600">{selectedExpenses.length}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div>
-                        <h4 className="text-lg font-bold mb-3">Expenses by Category</h4>
-                        <div className="space-y-2">
-                          {Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]).map(([category, amount]) => (
-                            <div key={category} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-3">
-                                <span className="text-2xl">{categoryEmojis[category]}</span>
-                                <span className="font-semibold capitalize">{category}</span>
-                              </div>
-                              <span className="text-lg font-bold text-indigo-600">€{amount.toFixed(2)}</span>
+                    <>
+                      {/* Left Panel: Summary, Calendar & Categories */}
+                      <div className="w-1/2 flex flex-col space-y-4 overflow-y-auto pr-3">
+                        {/* Summary */}
+                        <div className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-xl p-4 border-2 border-indigo-200">
+                          <h3 className="text-lg font-bold mb-3 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                            {monthName} {reportYear} Summary
+                          </h3>
+                          <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-white/80 rounded-lg p-3">
+                              <p className="text-xs text-gray-600 mb-1">Total Expenses</p>
+                              <p className="text-2xl font-bold text-indigo-600">€{totalExpenses.toFixed(2)}</p>
                             </div>
-                          ))}
+                            <div className="bg-white/80 rounded-lg p-3">
+                              <p className="text-xs text-gray-600 mb-1">Transactions</p>
+                              <p className="text-2xl font-bold text-purple-600">{selectedExpenses.length}</p>
+                            </div>
+                          </div>
                         </div>
+
+                        {/* Mini Calendar */}
+                        <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                          <h4 className="text-md font-bold mb-3">Select Day</h4>
+                          <div className="grid grid-cols-7 gap-1">
+                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                              <div key={i} className="text-center text-xs font-semibold text-gray-500 py-1">
+                                {day}
+                              </div>
+                            ))}
+                            {(() => {
+                              const firstDay = new Date(reportYear, reportMonth, 1).getDay();
+                              const days = [];
+                              
+                              // Empty cells
+                              for (let i = 0; i < firstDay; i++) {
+                                days.push(<div key={`empty-${i}`} className="aspect-square"></div>);
+                              }
+                              
+                              // Days
+                              for (let day = 1; day <= daysInMonth; day++) {
+                                const dateStr = `${reportYear}-${String(reportMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                const hasExpenses = expensesByDate[dateStr];
+                                const isSelected = selectedReportDate === dateStr;
+                                
+                                days.push(
+                                  <button
+                                    key={day}
+                                    onClick={() => setSelectedReportDate(dateStr)}
+                                    className={`aspect-square text-xs rounded-lg transition ${
+                                      isSelected
+                                        ? 'bg-indigo-600 text-white font-bold'
+                                        : hasExpenses
+                                        ? 'bg-red-100 hover:bg-red-200 text-red-700 font-semibold'
+                                        : 'hover:bg-gray-100 text-gray-700'
+                                    }`}
+                                  >
+                                    {day}
+                                  </button>
+                                );
+                              }
+                              
+                              return days;
+                            })()}
+                          </div>
+                        </div>
+
+                        {/* Expenses by Category */}
+                        <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                          <h4 className="text-md font-bold mb-3">Expenses by Category</h4>
+                          <div className="space-y-2">
+                            {Object.entries(categoryTotals).length === 0 ? (
+                              <p className="text-center text-gray-400 py-4 text-sm">No expenses this month</p>
+                            ) : (
+                              Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]).map(([category, amount]) => (
+                                <div key={category} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xl">{categoryEmojis[category]}</span>
+                                    <span className="font-semibold capitalize text-sm">{category}</span>
+                                  </div>
+                                  <span className="text-sm font-bold text-indigo-600">€{amount.toFixed(2)}</span>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Download Button */}
+                        <button
+                          onClick={() => generatePDFReport(reportMonth, reportYear)}
+                          className="py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg flex items-center justify-center gap-2"
+                        >
+                          📊 Download PDF Report
+                        </button>
                       </div>
 
-                      <div>
-                        <h4 className="text-lg font-bold mb-3">All Transactions</h4>
-                        <div className="max-h-80 overflow-y-auto space-y-2">
-                          {selectedExpenses.length === 0 ? (
-                            <p className="text-center text-gray-500 py-8">No expenses found for this month.</p>
-                          ) : (
-                            selectedExpenses.map((expense) => (
-                              <div key={expense._id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center gap-3">
-                                  <span className="text-xl">{categoryEmojis[expense.category]}</span>
-                                  <div>
-                                    <div className="font-semibold">{expense.description}</div>
-                                    <div className="text-xs text-gray-500">
-                                      {new Date(expense.date).toLocaleDateString()} - <span className="capitalize">{expense.category}</span>
-                                      {expense.subcategory && ` - ${expense.subcategory}`}
+                      {/* Right Panel: Transaction Details */}
+                      <div className="w-1/2 flex flex-col bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
+                        <h4 className="text-md font-bold mb-3">
+                          {selectedReportDate 
+                            ? `Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+                            : 'Select a day to view transactions'}
+                        </h4>
+                        <div className="flex-1 overflow-y-auto space-y-2">
+                          {selectedReportDate ? (
+                            expensesByDate[selectedReportDate] ? (
+                              expensesByDate[selectedReportDate].map((expense) => (
+                                <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                  <div className="flex items-center gap-3">
+                                    <span className="text-2xl">{getExpenseIcon(expense)}</span>
+                                    <div>
+                                      <div className="font-semibold">{expense.description}</div>
+                                      <div className="text-xs text-gray-500">
+                                        <span className="capitalize">{expense.category}</span>
+                                        {expense.subcategory && (
+                                          <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
+                                  <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
                                 </div>
-                                <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
-                              </div>
-                            ))
+                              ))
+                            ) : (
+                              <p className="text-center text-gray-400 py-12">No expenses on this day</p>
+                            )
+                          ) : (
+                            <p className="text-center text-gray-400 py-12">👈 Click on a day in the calendar to view its expenses</p>
                           )}
                         </div>
                       </div>
-
-                      <button
-                        onClick={() => {
-                          generatePDFReport(reportMonth, reportYear);
-                        }}
-                        className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold hover:from-indigo-700 hover:to-purple-700 transition shadow-lg flex items-center justify-center gap-2"
-                      >
-                        📊 Download PDF Report
-                      </button>
-                    </div>
+                    </>
                   );
                 })()}
               </div>
@@ -1186,13 +1309,13 @@ export default function Dashboard() {
                               className="flex items-center justify-between p-3 bg-white rounded-lg"
                             >
                               <div className="flex items-center gap-3">
-                                <span className="text-2xl">{categoryEmojis[expense.category]}</span>
+                                <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                 <div>
                                   <div className="font-semibold">{expense.description}</div>
                                   <div className="text-sm text-gray-600">
                                     <span className="capitalize">{expense.category}</span>
                                     {expense.subcategory && (
-                                      <span className="text-gray-500"> - {expense.subcategory}</span>
+                                      <span className="text-indigo-600"> • {expense.subcategory}</span>
                                     )}
                                   </div>
                                 </div>
