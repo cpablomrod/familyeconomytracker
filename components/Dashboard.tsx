@@ -40,6 +40,7 @@ const categoryEmojis: { [key: string]: string } = {
   leisure: '🎮',
   appliances: '📦',
   'home-renovations': '🔨',
+  medicine: '💊',
 };
 
 const subcategoryEmojis: { [key: string]: string } = {
@@ -77,6 +78,9 @@ const subcategoryEmojis: { [key: string]: string } = {
   kids: '🧒',
   adults: '👔',
   baby: '👶',
+  // Medicine subcategories
+  adult: '👨',
+  child: '👦',
 };
 
 const getExpenseIcon = (expense: Expense): string => {
@@ -1148,6 +1152,7 @@ export default function Dashboard() {
                         <option value="leisure">🎮 Leisure</option>
                         <option value="appliances">📦 Appliances</option>
                         <option value="home-renovations">🔨 Home Renovations</option>
+                        <option value="medicine">💊 Medicine</option>
                       </select>
                     </div>
                   </div>
@@ -1271,6 +1276,27 @@ export default function Dashboard() {
                       </select>
                     </div>
                   )}
+
+                  {/* Medicine Subcategory */}
+                  {expenseCategory === 'medicine' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">💊</span> For Whom
+                      </label>
+                      <select
+                        value={expenseSubcategory}
+                        onChange={(e) => setExpenseSubcategory(e.target.value)}
+                        required
+                        className="w-full px-5 py-3 text-lg border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-200 focus:outline-none bg-gradient-to-r from-white to-red-50 appearance-none cursor-pointer transition-all font-medium"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23ef4444\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                      >
+                        <option value="">✨ Select Category</option>
+                        <option value="adult">👨 Adult</option>
+                        <option value="child">👦 Child</option>
+                      </select>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                       <span className="text-lg">📝</span> Description
