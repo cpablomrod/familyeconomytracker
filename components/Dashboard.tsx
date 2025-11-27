@@ -741,7 +741,7 @@ export default function Dashboard() {
                         'appliances': '📦', 'home-renovations': '🔨', 'medicine': '💊',
                         'vehicle-maintenance': '🔧',
                         // Savings categories
-                        'family-fund': '💰', 'university-fund': '🎓', 'holidays': '🏖️',
+                        'family-fund': '💰', 'education-fund': '🎓', 'holidays': '🏖️',
                         'general-savings': '💎', 'new-home': '🏠', 'new-car': '🚗',
                         'wedding': '💍', 'baby-fund': '👶'
                       };

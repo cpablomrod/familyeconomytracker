@@ -599,7 +599,7 @@ export default function ProfilePage() {
                   
                   const savingsCategories = [
                     { value: 'family-fund', label: '💰 Family Fund' },
-                    { value: 'university-fund', label: '🎓 University Fund' },
+                    { value: 'education-fund', label: '🎓 Education Fund' },
                     { value: 'holidays', label: '🏖️ Holidays' },
                     { value: 'general-savings', label: '💎 General Savings' },
                     { value: 'new-home', label: '🏠 New Home' },
