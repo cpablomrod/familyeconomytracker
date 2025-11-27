@@ -614,39 +614,40 @@ export default function ProfilePage() {
                         ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-300 shadow-md' 
                         : 'bg-gray-50 border-gray-200 border-dashed'
                     }`}>
-                      <div className="flex items-center gap-3">
-                        {isComplete && <span className="text-2xl">✅</span>}
-                        <div className="flex-1 grid grid-cols-2 gap-3">
-                          {/* Target Type */}
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Target Type</label>
-                            <select
-                              value={targetType}
-                              onChange={(e) => {
-                                updateEconomicTarget(index, 'type', e.target.value as 'expense' | 'savings');
-                                updateEconomicTarget(index, 'category', '');
-                              }}
-                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none text-sm"
-                            >
-                              <option value="expense">💪 Expense Limit</option>
-                              <option value="savings">💰 Savings Goal</option>
-                            </select>
-                          </div>
-                          
-                          {/* Category */}
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
-                            <select
-                              value={target.category || ''}
-                              onChange={(e) => updateEconomicTarget(index, 'category', e.target.value)}
-                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none text-sm"
-                            >
-                              <option value="">Select category...</option>
-                              {(targetType === 'expense' ? expenseCategories : savingsCategories).map(cat => (
-                                <option key={cat.value} value={cat.value}>{cat.label}</option>
-                              ))}
-                            </select>
-                          </div>
+                      {isComplete && <div className="mb-2"><span className="text-2xl">✅</span></div>}
+                      
+                      <div className="grid grid-cols-2 gap-3 mb-3">
+                        {/* Target Type */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Target Type</label>
+                          <select
+                            value={targetType}
+                            onChange={(e) => {
+                              const newType = e.target.value as 'expense' | 'savings';
+                              const updated = [...economicTargets];
+                              updated[index] = { ...updated[index], type: newType, category: '' };
+                              setEconomicTargets(updated);
+                            }}
+                            className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                          >
+                            <option value="expense">💪 Expense Limit</option>
+                            <option value="savings">💰 Savings Goal</option>
+                          </select>
+                        </div>
+                        
+                        {/* Category */}
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+                          <select
+                            value={target.category || ''}
+                            onChange={(e) => updateEconomicTarget(index, 'category', e.target.value)}
+                            className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                          >
+                            <option value="">Select category...</option>
+                            {(targetType === 'expense' ? expenseCategories : savingsCategories).map(cat => (
+                              <option key={cat.value} value={cat.value}>{cat.label}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                       
