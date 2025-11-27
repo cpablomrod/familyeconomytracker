@@ -17,7 +17,7 @@ interface Family {
   fixedPayments?: Array<{ name: string; amount: number }>;
   properties?: Array<{ name: string; value: number; monthlyPayment?: number }>;
   loans?: Array<{ name: string; monthlyAmount: number; endDate: string }>;
-  economicTargets?: Array<{ description: string; targetAmount: number }>;
+  economicTargets?: Array<{ description: string; targetAmount: number; type: 'expense' | 'savings'; category?: string }>;
 }
 
 interface Expense {
@@ -710,12 +710,43 @@ export default function Dashboard() {
                 ) : (
                   <div className="space-y-3">
                     {family.economicTargets.map((target, index) => {
-                      // Calculate current savings based on monthly balance
-                      const currentSavings = financials.monthlyBalance > 0 
-                        ? Math.min(financials.monthlyBalance, target.targetAmount) 
-                        : 0;
-                      const progress = (currentSavings / target.targetAmount) * 100;
-                      const isComplete = progress >= 100;
+                      const targetType = target.type || 'savings';
+                      const targetCategory = target.category;
+                      
+                      let currentAmount = 0;
+                      let isComplete = false;
+                      
+                      if (targetType === 'expense' && targetCategory) {
+                        // For expense targets: check current month's spending in category
+                        currentAmount = expenses
+                          .filter(e => isThisMonth(e.date) && e.category === targetCategory)
+                          .reduce((sum, e) => sum + e.amount, 0);
+                        
+                        // Complete if spending is UNDER target
+                        isComplete = currentAmount <= target.targetAmount;
+                      } else if (targetType === 'savings') {
+                        // For savings targets: use monthly balance
+                        currentAmount = financials.monthlyBalance > 0 
+                          ? Math.min(financials.monthlyBalance, target.targetAmount) 
+                          : 0;
+                        
+                        // Complete if savings reach target
+                        isComplete = currentAmount >= target.targetAmount;
+                      }
+                      
+                      const categoryIcons: { [key: string]: string } = {
+                        // Expense categories
+                        'food': '🍔', 'gasoline': '⛽', 'clothing': '👗', 'utilities': '💡',
+                        'restaurants': '🍽️', 'travelling': '✈️', 'leisure': '🎮',
+                        'appliances': '📦', 'home-renovations': '🔨', 'medicine': '💊',
+                        'vehicle-maintenance': '🔧',
+                        // Savings categories
+                        'family-fund': '💰', 'university-fund': '🎓', 'holidays': '🏖️',
+                        'general-savings': '💎', 'new-home': '🏠', 'new-car': '🚗',
+                        'wedding': '💍', 'baby-fund': '👶'
+                      };
+                      
+                      const categoryIcon = targetCategory ? categoryIcons[targetCategory] || '🎯' : '🎯';
 
                       return (
                         <div 
@@ -726,14 +757,15 @@ export default function Dashboard() {
                               : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300'
                           }`}
                         >
-                          <div className="flex items-center gap-3">
-                            <span className={`text-3xl ${
+                          <div className="flex items-center gap-2">
+                            <span className={`text-2xl ${
                               isComplete ? 'animate-bounce' : ''
                             }`}>
                               {isComplete ? '✅' : '❌'}
                             </span>
+                            <span className="text-2xl">{categoryIcon}</span>
                             <div className="flex-1">
-                              <p className={`font-bold text-sm mb-1 ${
+                              <p className={`font-bold text-xs mb-1 ${
                                 isComplete ? 'text-green-700' : 'text-red-700'
                               }`}>
                                 {target.description}
@@ -742,13 +774,11 @@ export default function Dashboard() {
                                 <p className={`text-xs font-semibold ${
                                   isComplete ? 'text-green-600' : 'text-red-600'
                                 }`}>
-                                  Target: €{target.targetAmount.toFixed(0)}
+                                  {targetType === 'expense' ? 'Limit' : 'Goal'}: €{target.targetAmount.toFixed(0)}
                                 </p>
-                                {!isComplete && (
-                                  <p className="text-xs text-gray-600">
-                                    Current: €{currentSavings.toFixed(0)}
-                                  </p>
-                                )}
+                                <p className="text-xs text-gray-600">
+                                  {targetType === 'expense' ? 'Spent' : 'Saved'}: €{currentAmount.toFixed(0)}
+                                </p>
                               </div>
                             </div>
                           </div>

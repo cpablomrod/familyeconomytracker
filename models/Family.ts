@@ -25,6 +25,8 @@ export interface ILoan {
 export interface IEconomicTarget {
   description: string;
   targetAmount: number;
+  type: 'expense' | 'savings';
+  category?: string; // expense category or savings category
 }
 
 export interface IFamily {
@@ -107,6 +109,8 @@ const FamilySchema = new Schema<IFamily>({
     type: [{
       description: { type: String, required: true },
       targetAmount: { type: Number, required: true },
+      type: { type: String, enum: ['expense', 'savings'], default: 'savings' },
+      category: { type: String },
     }],
     default: [],
   },

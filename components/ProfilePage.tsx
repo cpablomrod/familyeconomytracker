@@ -10,7 +10,7 @@ interface Family {
   fixedPayments?: Array<{ name: string; amount: number }>;
   properties?: Array<{ name: string; value: number; monthlyPayment?: number }>;
   loans?: Array<{ name: string; monthlyAmount: number; endDate: string }>;
-  economicTargets?: Array<{ description: string; targetAmount: number }>;
+  economicTargets?: Array<{ description: string; targetAmount: number; type: 'expense' | 'savings'; category?: string }>;
 }
 
 type TabType = 'income' | 'payments' | 'properties' | 'loans' | 'targets';
@@ -38,7 +38,7 @@ export default function ProfilePage() {
   const [loans, setLoans] = useState<Array<{ name: string; monthlyAmount: number; endDate: string }>>([]);
   
   // Economic Targets State
-  const [economicTargets, setEconomicTargets] = useState<Array<{ description: string; targetAmount: number }>>([]);
+  const [economicTargets, setEconomicTargets] = useState<Array<{ description: string; targetAmount: number; type: 'expense' | 'savings'; category?: string }>>([]);
 
   useEffect(() => {
     const familyData = localStorage.getItem('currentFamily');
@@ -95,7 +95,7 @@ export default function ProfilePage() {
     const validFixedPayments = fixedPayments.filter(p => p.name && p.name.trim() && p.amount > 0);
     const validProperties = properties.filter(p => p.name && p.name.trim() && p.value > 0);
     const validLoans = loans.filter(l => l.name && l.name.trim() && l.monthlyAmount > 0 && l.endDate);
-    const validEconomicTargets = economicTargets.filter(t => t.description && t.description.trim() && t.targetAmount > 0);
+    const validEconomicTargets = economicTargets.filter(t => t.description && t.description.trim() && t.targetAmount > 0 && t.category);
 
     setSaving(true);
     try {
@@ -222,10 +222,10 @@ export default function ProfilePage() {
   ];
 
   const addEconomicTarget = () => {
-    setEconomicTargets([...economicTargets, { description: '', targetAmount: 0 }]);
+    setEconomicTargets([...economicTargets, { description: '', targetAmount: 0, type: 'savings', category: undefined }]);
   };
 
-  const updateEconomicTarget = (index: number, field: 'description' | 'targetAmount', value: string | number) => {
+  const updateEconomicTarget = (index: number, field: 'description' | 'targetAmount' | 'type' | 'category', value: string | number) => {
     const updated = [...economicTargets];
     updated[index] = { ...updated[index], [field]: value };
     setEconomicTargets(updated);
@@ -579,36 +579,104 @@ export default function ProfilePage() {
                 <p className="text-center text-gray-500 py-8">No economic targets set yet. Click "+ Add Target" to get started!</p>
               ) : (
                 economicTargets.map((target, index) => {
-                  const isComplete = target.description && target.description.trim() && target.targetAmount > 0;
-                  const randomHint = targetHints[Math.floor(Math.random() * targetHints.length)];
+                  const isComplete = target.description && target.description.trim() && target.targetAmount > 0 && target.category;
+                  const targetType = target.type || 'savings';
+                  
+                  // Category options based on type
+                  const expenseCategories = [
+                    { value: 'food', label: '🍔 Food' },
+                    { value: 'gasoline', label: '⛽ Gasoline' },
+                    { value: 'clothing', label: '👗 Clothing' },
+                    { value: 'utilities', label: '💡 Utilities' },
+                    { value: 'restaurants', label: '🍽️ Restaurants' },
+                    { value: 'travelling', label: '✈️ Travelling' },
+                    { value: 'leisure', label: '🎮 Leisure' },
+                    { value: 'appliances', label: '📦 Appliances' },
+                    { value: 'home-renovations', label: '🔨 Home Renovations' },
+                    { value: 'medicine', label: '💊 Medicine' },
+                    { value: 'vehicle-maintenance', label: '🔧 Vehicle Maintenance' },
+                  ];
+                  
+                  const savingsCategories = [
+                    { value: 'family-fund', label: '💰 Family Fund' },
+                    { value: 'university-fund', label: '🎓 University Fund' },
+                    { value: 'holidays', label: '🏖️ Holidays' },
+                    { value: 'general-savings', label: '💎 General Savings' },
+                    { value: 'new-home', label: '🏠 New Home' },
+                    { value: 'new-car', label: '🚗 New Car' },
+                    { value: 'wedding', label: '💍 Wedding' },
+                    { value: 'baby-fund', label: '👶 Baby Fund' },
+                  ];
+                  
                   return (
-                    <div key={index} className={`flex gap-4 items-center p-4 rounded-xl border-2 transition-all ${
+                    <div key={index} className={`p-4 rounded-xl border-2 transition-all space-y-3 ${
                       isComplete 
                         ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-300 shadow-md' 
                         : 'bg-gray-50 border-gray-200 border-dashed'
                     }`}>
-                      {isComplete && <span className="text-2xl">✅</span>}
-                      <input
-                        type="text"
-                        placeholder={randomHint}
-                        value={target.description}
-                        onChange={(e) => updateEconomicTarget(index, 'description', e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                        title={`e.g., ${targetHints.slice(0, 3).join(', ')}`}
-                      />
-                      <input
-                        type="number"
-                        placeholder="Target Amount"
-                        value={target.targetAmount || ''}
-                        onChange={(e) => updateEconomicTarget(index, 'targetAmount', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
-                      />
-                      <button
-                        onClick={() => removeEconomicTarget(index)}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-                      >
-                        Remove
-                      </button>
+                      <div className="flex items-center gap-3">
+                        {isComplete && <span className="text-2xl">✅</span>}
+                        <div className="flex-1 grid grid-cols-2 gap-3">
+                          {/* Target Type */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Target Type</label>
+                            <select
+                              value={targetType}
+                              onChange={(e) => {
+                                updateEconomicTarget(index, 'type', e.target.value as 'expense' | 'savings');
+                                updateEconomicTarget(index, 'category', '');
+                              }}
+                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none text-sm"
+                            >
+                              <option value="expense">💪 Expense Limit</option>
+                              <option value="savings">💰 Savings Goal</option>
+                            </select>
+                          </div>
+                          
+                          {/* Category */}
+                          <div>
+                            <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+                            <select
+                              value={target.category || ''}
+                              onChange={(e) => updateEconomicTarget(index, 'category', e.target.value)}
+                              className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none text-sm"
+                            >
+                              <option value="">Select category...</option>
+                              {(targetType === 'expense' ? expenseCategories : savingsCategories).map(cat => (
+                                <option key={cat.value} value={cat.value}>{cat.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        {/* Description */}
+                        <input
+                          type="text"
+                          placeholder={targetType === 'expense' ? 'e.g., Reduce food expenses' : 'e.g., Save for holidays'}
+                          value={target.description}
+                          onChange={(e) => updateEconomicTarget(index, 'description', e.target.value)}
+                          className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        />
+                        
+                        {/* Target Amount */}
+                        <input
+                          type="number"
+                          placeholder="Amount"
+                          value={target.targetAmount || ''}
+                          onChange={(e) => updateEconomicTarget(index, 'targetAmount', parseFloat(e.target.value) || 0)}
+                          className="w-32 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        />
+                        
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => removeEconomicTarget(index)}
+                          className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   );
                 })
