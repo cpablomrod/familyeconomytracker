@@ -111,6 +111,12 @@ export default function Dashboard() {
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [selectedReportDate, setSelectedReportDate] = useState<string | null>(null);
   const [reportViewMode, setReportViewMode] = useState<'daily' | 'weekly'>('daily');
+  
+  // Monthly income state
+  const [monthlyIncome, setMonthlyIncome] = useState<any>(null);
+  const [showIncomeModal, setShowIncomeModal] = useState(false);
+  const [incomeEntries, setIncomeEntries] = useState<Array<{ source: string; amount: number }>>([]);
+  const [savingIncome, setSavingIncome] = useState(false);
 
   // Form state
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -133,6 +139,7 @@ export default function Dashboard() {
     if (familyId) {
       fetchProfile(familyId);
       fetchExpenses(familyId);
+      fetchMonthlyIncome(familyId);
     }
   }, [router]);
 
@@ -164,6 +171,71 @@ export default function Dashboard() {
       console.error('Error fetching expenses:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchMonthlyIncome = async (familyId: string) => {
+    try {
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getFullYear();
+      
+      const res = await fetch(`/api/monthly-income?familyId=${familyId}&month=${month}&year=${year}`);
+      const data = await res.json();
+      
+      if (res.ok) {
+        setMonthlyIncome(data.monthlyIncome);
+        if (data.monthlyIncome) {
+          setIncomeEntries(data.monthlyIncome.incomes);
+        } else {
+          // Pre-populate with profile income streams
+          const defaultIncomes = family?.incomeStreams?.map(stream => ({
+            source: stream.source,
+            amount: stream.amount
+          })) || [];
+          setIncomeEntries(defaultIncomes);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching monthly income:', error);
+    }
+  };
+
+  const handleSaveMonthlyIncome = async () => {
+    if (!family) return;
+    
+    const familyId = family.id || (family as any)._id;
+    if (!familyId) return;
+    
+    setSavingIncome(true);
+    
+    try {
+      const currentDate = new Date();
+      const month = currentDate.getMonth() + 1;
+      const year = currentDate.getFullYear();
+      
+      const res = await fetch('/api/monthly-income', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          familyId,
+          month,
+          year,
+          incomes: incomeEntries.filter(entry => entry.source && entry.amount > 0)
+        }),
+      });
+      
+      if (res.ok) {
+        const data = await res.json();
+        setMonthlyIncome(data.monthlyIncome);
+        setShowIncomeModal(false);
+        // Refresh to update calculations
+        fetchMonthlyIncome(familyId);
+      }
+    } catch (error) {
+      console.error('Error saving monthly income:', error);
+    } finally {
+      setSavingIncome(false);
     }
   };
 
@@ -277,8 +349,9 @@ export default function Dashboard() {
   const calculateFinancials = () => {
     const totals = calculateTotals();
     
-    const monthlyIncome = family?.incomeStreams?.reduce((sum, stream) => sum + stream.amount, 0) || 0;
-    const yearlyIncome = monthlyIncome * 12;
+    // Use actual monthly income if available, otherwise use profile income streams
+    const actualMonthlyIncome = monthlyIncome?.totalIncome || family?.incomeStreams?.reduce((sum, stream) => sum + stream.amount, 0) || 0;
+    const yearlyIncome = actualMonthlyIncome * 12;
     
     const monthlyFixedPayments = family?.fixedPayments?.reduce((sum, payment) => sum + payment.amount, 0) || 0;
     const yearlyFixedPayments = monthlyFixedPayments * 12;
@@ -289,7 +362,7 @@ export default function Dashboard() {
     const monthlyLoanPayments = family?.loans?.reduce((sum, loan) => sum + loan.monthlyAmount, 0) || 0;
     const yearlyLoanPayments = monthlyLoanPayments * 12;
 
-    const currentIncome = viewMode === 'monthly' ? monthlyIncome : yearlyIncome;
+    const currentIncome = viewMode === 'monthly' ? actualMonthlyIncome : yearlyIncome;
     const currentFixedPayments = viewMode === 'monthly' ? monthlyFixedPayments : yearlyFixedPayments;
     const currentPropertyPayments = viewMode === 'monthly' ? monthlyPropertyPayments : yearlyPropertyPayments;
     const currentLoanPayments = viewMode === 'monthly' ? monthlyLoanPayments : yearlyLoanPayments;
@@ -588,6 +661,29 @@ export default function Dashboard() {
               </div>
               
               <button
+                onClick={() => {
+                  // Pre-populate modal with current data
+                  if (monthlyIncome) {
+                    setIncomeEntries(monthlyIncome.incomes);
+                  } else {
+                    const defaultIncomes = family?.incomeStreams?.map(stream => ({
+                      source: stream.source,
+                      amount: stream.amount
+                    })) || [{ source: '', amount: 0 }];
+                    setIncomeEntries(defaultIncomes);
+                  }
+                  setShowIncomeModal(true);
+                }}
+                className={`px-6 py-2 rounded-lg transition shadow-md font-semibold flex items-center gap-2 ${
+                  monthlyIncome
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:from-emerald-700 hover:to-teal-700'
+                    : 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:from-amber-600 hover:to-orange-600 animate-pulse'
+                }`}
+              >
+                💵 {monthlyIncome ? 'Update' : 'Record'} Monthly Income
+              </button>
+              
+              <button
                 onClick={() => setShowReportModal(true)}
                 className="px-6 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition shadow-md font-semibold flex items-center gap-2"
               >
@@ -775,6 +871,120 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {/* Monthly Income Modal */}
+        {showIncomeModal && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4" onClick={() => setShowIncomeModal(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-2xl w-full" onClick={(e) => e.stopPropagation()}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                  💵 Record Monthly Income
+                </h2>
+                <button
+                  onClick={() => setShowIncomeModal(false)}
+                  className="text-gray-500 hover:text-gray-700 text-3xl font-bold hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-600 mb-2">
+                  Record your actual income for <span className="font-bold text-indigo-600">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</span>
+                </p>
+                {family?.incomeStreams && family.incomeStreams.length > 0 && !monthlyIncome && (
+                  <p className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+                    💡 Pre-filled with your profile income streams. Adjust amounts as needed.
+                  </p>
+                )}
+              </div>
+
+              <div className="space-y-4 mb-6 max-h-[400px] overflow-y-auto">
+                {incomeEntries.map((entry, index) => (
+                  <div key={index} className="flex gap-3 items-start">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Income Source
+                      </label>
+                      <input
+                        type="text"
+                        value={entry.source}
+                        onChange={(e) => {
+                          const newEntries = [...incomeEntries];
+                          newEntries[index].source = e.target.value;
+                          setIncomeEntries(newEntries);
+                        }}
+                        placeholder="e.g., Salary, Freelance, etc."
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+                      />
+                    </div>
+                    <div className="w-40">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Amount (€)
+                      </label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        value={entry.amount}
+                        onChange={(e) => {
+                          const newEntries = [...incomeEntries];
+                          newEntries[index].amount = parseFloat(e.target.value) || 0;
+                          setIncomeEntries(newEntries);
+                        }}
+                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+                      />
+                    </div>
+                    <button
+                      onClick={() => {
+                        const newEntries = incomeEntries.filter((_, i) => i !== index);
+                        setIncomeEntries(newEntries.length > 0 ? newEntries : [{ source: '', amount: 0 }]);
+                      }}
+                      className="mt-7 w-10 h-10 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center justify-center"
+                      title="Remove"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <button
+                onClick={() => {
+                  setIncomeEntries([...incomeEntries, { source: '', amount: 0 }]);
+                }}
+                className="mb-6 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition font-medium flex items-center gap-2"
+              >
+                + Add Income Source
+              </button>
+
+              <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl border-2 border-emerald-200 mb-6">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-semibold text-gray-700">Total Monthly Income:</span>
+                  <span className="text-3xl font-bold text-emerald-600">
+                    €{incomeEntries.reduce((sum, entry) => sum + (entry.amount || 0), 0).toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowIncomeModal(false)}
+                  className="flex-1 py-3 bg-gray-200 text-gray-700 rounded-xl font-bold hover:bg-gray-300 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveMonthlyIncome}
+                  disabled={savingIncome || incomeEntries.every(e => !e.source || e.amount <= 0)}
+                  className="flex-1 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl font-bold hover:from-emerald-700 hover:to-teal-700 transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {savingIncome ? '⏳ Saving...' : '✨ Save Income'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Monthly Report Modal */}
         {showReportModal && (
