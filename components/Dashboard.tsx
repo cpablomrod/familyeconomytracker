@@ -41,6 +41,7 @@ const categoryEmojis: { [key: string]: string } = {
   appliances: '📦',
   'home-renovations': '🔨',
   medicine: '💊',
+  'vehicle-maintenance': '🔧',
 };
 
 const subcategoryEmojis: { [key: string]: string } = {
@@ -81,6 +82,10 @@ const subcategoryEmojis: { [key: string]: string } = {
   // Medicine subcategories
   adult: '👨',
   child: '👦',
+  // Vehicle Maintenance subcategories
+  taxes: '💸',
+  'general-maintenance': '🔧',
+  repairs: '🔨',
 };
 
 const getExpenseIcon = (expense: Expense): string => {
@@ -105,6 +110,7 @@ export default function Dashboard() {
   const [reportMonth, setReportMonth] = useState(new Date().getMonth());
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [selectedReportDate, setSelectedReportDate] = useState<string | null>(null);
+  const [reportViewMode, setReportViewMode] = useState<'daily' | 'weekly'>('daily');
 
   // Form state
   const [expenseDate, setExpenseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -596,8 +602,8 @@ export default function Dashboard() {
             <div className="flex flex-col lg:flex-row items-start justify-center gap-12">
               {/* Economic Targets - Left Side */}
               <div className="space-y-4 min-w-[300px] max-w-[350px]">
-                <h3 className="text-xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent flex items-center gap-2">
-                  🎯 Economic Targets
+                <h3 className="text-xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent flex items-center gap-2">
+                  💰 Economic Targets
                 </h3>
                 {(!family?.economicTargets || family.economicTargets.length === 0) ? (
                   <div className="p-6 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border-2 border-dashed border-gray-300">
@@ -618,43 +624,38 @@ export default function Dashboard() {
                       return (
                         <div 
                           key={index} 
-                          className={`p-4 rounded-xl border-2 transition-all ${
+                          className={`p-4 rounded-xl border-2 transition-all shadow-md ${
                             isComplete 
-                              ? 'bg-gradient-to-r from-teal-50 to-cyan-50 border-teal-300 shadow-md'
-                              : 'bg-white border-gray-200'
+                              ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-400'
+                              : 'bg-gradient-to-br from-red-50 to-rose-50 border-red-300'
                           }`}
                         >
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-start gap-2 flex-1">
-                              {isComplete && <span className="text-xl">✅</span>}
-                              <div className="flex-1">
-                                <p className="font-semibold text-gray-900 text-sm leading-tight">
-                                  {target.description}
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
+                          <div className="flex items-center gap-3">
+                            <span className={`text-3xl ${
+                              isComplete ? 'animate-bounce' : ''
+                            }`}>
+                              {isComplete ? '✅' : '❌'}
+                            </span>
+                            <div className="flex-1">
+                              <p className={`font-bold text-sm mb-1 ${
+                                isComplete ? 'text-green-700' : 'text-red-700'
+                              }`}>
+                                {target.description}
+                              </p>
+                              <div className="flex items-center justify-between">
+                                <p className={`text-xs font-semibold ${
+                                  isComplete ? 'text-green-600' : 'text-red-600'
+                                }`}>
                                   Target: €{target.targetAmount.toFixed(0)}
                                 </p>
+                                {!isComplete && (
+                                  <p className="text-xs text-gray-600">
+                                    Current: €{currentSavings.toFixed(0)}
+                                  </p>
+                                )}
                               </div>
                             </div>
                           </div>
-                          
-                          {!isComplete && (
-                            <div className="mt-3">
-                              <div className="flex justify-between text-xs text-gray-600 mb-1">
-                                <span>Progress</span>
-                                <span className="font-bold">{progress.toFixed(0)}%</span>
-                              </div>
-                              <div className="w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
-                                <div 
-                                  className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-teal-500 to-cyan-500"
-                                  style={{ width: `${Math.min(progress, 100)}%` }}
-                                ></div>
-                              </div>
-                              <p className="text-xs text-gray-500 mt-1">
-                                €{currentSavings.toFixed(0)} / €{target.targetAmount.toFixed(0)}
-                              </p>
-                            </div>
-                          )}
                         </div>
                       );
                     })}
@@ -791,35 +792,64 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              {/* Month/Year Selector */}
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    📅 Select Month
-                  </label>
-                  <select
-                    value={reportMonth}
-                    onChange={(e) => { setReportMonth(parseInt(e.target.value)); setSelectedReportDate(null); }}
-                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
-                  >
-                    {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
-                      <option key={idx} value={idx}>{month}</option>
-                    ))}
-                  </select>
+              {/* Month/Year Selector and View Mode Toggle */}
+              <div className="space-y-4 mb-4">
+                {/* View Mode Toggle */}
+                <div className="flex justify-center">
+                  <div className="inline-flex rounded-lg border-2 border-indigo-600 p-1 bg-white/50">
+                    <button
+                      onClick={() => { setReportViewMode('daily'); setSelectedReportDate(null); }}
+                      className={`px-6 py-2 rounded-md font-semibold transition-all ${
+                        reportViewMode === 'daily'
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                          : 'text-indigo-600 hover:bg-indigo-50'
+                      }`}
+                    >
+                      📅 Daily View
+                    </button>
+                    <button
+                      onClick={() => { setReportViewMode('weekly'); setSelectedReportDate(null); }}
+                      className={`px-6 py-2 rounded-md font-semibold transition-all ${
+                        reportViewMode === 'weekly'
+                          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
+                          : 'text-indigo-600 hover:bg-indigo-50'
+                      }`}
+                    >
+                      📆 Weekly View
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    📆 Select Year
-                  </label>
-                  <select
-                    value={reportYear}
-                    onChange={(e) => { setReportYear(parseInt(e.target.value)); setSelectedReportDate(null); }}
-                    className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
-                  >
-                    {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-                      <option key={year} value={year}>{year}</option>
-                    ))}
-                  </select>
+
+                {/* Month/Year Selector */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                      📅 Select Month
+                    </label>
+                    <select
+                      value={reportMonth}
+                      onChange={(e) => { setReportMonth(parseInt(e.target.value)); setSelectedReportDate(null); }}
+                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                    >
+                      {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
+                        <option key={idx} value={idx}>{month}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                      📆 Select Year
+                    </label>
+                    <select
+                      value={reportYear}
+                      onChange={(e) => { setReportYear(parseInt(e.target.value)); setSelectedReportDate(null); }}
+                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                    >
+                      {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+                        <option key={year} value={year}>{year}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </div>
 
@@ -848,6 +878,29 @@ export default function Dashboard() {
                     expensesByDate[e.date].push(e);
                   });
 
+                  // Group expenses by week
+                  const getWeekNumber = (dateStr: string) => {
+                    const date = new Date(dateStr + 'T12:00:00');
+                    const firstDay = new Date(reportYear, reportMonth, 1);
+                    const dayOfMonth = date.getDate();
+                    const firstDayOfWeek = firstDay.getDay();
+                    return Math.ceil((dayOfMonth + firstDayOfWeek) / 7);
+                  };
+
+                  const expensesByWeek: { [key: number]: Expense[] } = {};
+                  selectedExpenses.forEach(e => {
+                    const weekNum = getWeekNumber(e.date);
+                    if (!expensesByWeek[weekNum]) {
+                      expensesByWeek[weekNum] = [];
+                    }
+                    expensesByWeek[weekNum].push(e);
+                  });
+
+                  const weeklyTotals: { [key: number]: number } = {};
+                  Object.keys(expensesByWeek).forEach(weekNum => {
+                    weeklyTotals[parseInt(weekNum)] = expensesByWeek[parseInt(weekNum)].reduce((sum, e) => sum + e.amount, 0);
+                  });
+
                   const monthName = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][reportMonth];
                   const daysInMonth = new Date(reportYear, reportMonth + 1, 0).getDate();
 
@@ -872,51 +925,96 @@ export default function Dashboard() {
                           </div>
                         </div>
 
-                        {/* Mini Calendar */}
-                        <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
-                          <h4 className="text-md font-bold mb-3">Select Day</h4>
-                          <div className="grid grid-cols-7 gap-1">
-                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                              <div key={i} className="text-center text-xs font-semibold text-gray-500 py-1">
-                                {day}
-                              </div>
-                            ))}
-                            {(() => {
-                              const firstDay = new Date(reportYear, reportMonth, 1).getDay();
-                              const days = [];
-                              
-                              // Empty cells
-                              for (let i = 0; i < firstDay; i++) {
-                                days.push(<div key={`empty-${i}`} className="aspect-square"></div>);
-                              }
-                              
-                              // Days
-                              for (let day = 1; day <= daysInMonth; day++) {
-                                const dateStr = `${reportYear}-${String(reportMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                                const hasExpenses = expensesByDate[dateStr];
-                                const isSelected = selectedReportDate === dateStr;
+                        {/* Daily/Weekly Selector */}
+                        {reportViewMode === 'daily' ? (
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <h4 className="text-md font-bold mb-3">Select Day</h4>
+                            <div className="grid grid-cols-7 gap-1">
+                              {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                                <div key={i} className="text-center text-xs font-semibold text-gray-500 py-1">
+                                  {day}
+                                </div>
+                              ))}
+                              {(() => {
+                                const firstDay = new Date(reportYear, reportMonth, 1).getDay();
+                                const days = [];
                                 
-                                days.push(
+                                // Empty cells
+                                for (let i = 0; i < firstDay; i++) {
+                                  days.push(<div key={`empty-${i}`} className="aspect-square"></div>);
+                                }
+                                
+                                // Days
+                                for (let day = 1; day <= daysInMonth; day++) {
+                                  const dateStr = `${reportYear}-${String(reportMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                                  const hasExpenses = expensesByDate[dateStr];
+                                  const isSelected = selectedReportDate === dateStr;
+                                  
+                                  days.push(
+                                    <button
+                                      key={day}
+                                      onClick={() => setSelectedReportDate(dateStr)}
+                                      className={`aspect-square text-xs rounded-lg transition ${
+                                        isSelected
+                                          ? 'bg-indigo-600 text-white font-bold'
+                                          : hasExpenses
+                                          ? 'bg-red-100 hover:bg-red-200 text-red-700 font-semibold'
+                                          : 'hover:bg-gray-100 text-gray-700'
+                                      }`}
+                                    >
+                                      {day}
+                                    </button>
+                                  );
+                                }
+                                
+                                return days;
+                              })()}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
+                            <h4 className="text-md font-bold mb-3">Select Week</h4>
+                            <div className="space-y-2">
+                              {Object.keys(expensesByWeek).sort((a, b) => parseInt(a) - parseInt(b)).map((weekNum) => {
+                                const weekNumber = parseInt(weekNum);
+                                const isSelected = selectedReportDate === `week-${weekNumber}`;
+                                const weekExpenses = expensesByWeek[weekNumber];
+                                const weekTotal = weeklyTotals[weekNumber];
+                                
+                                return (
                                   <button
-                                    key={day}
-                                    onClick={() => setSelectedReportDate(dateStr)}
-                                    className={`aspect-square text-xs rounded-lg transition ${
+                                    key={weekNum}
+                                    onClick={() => setSelectedReportDate(`week-${weekNumber}`)}
+                                    className={`w-full p-3 rounded-lg transition text-left ${
                                       isSelected
-                                        ? 'bg-indigo-600 text-white font-bold'
-                                        : hasExpenses
-                                        ? 'bg-red-100 hover:bg-red-200 text-red-700 font-semibold'
-                                        : 'hover:bg-gray-100 text-gray-700'
+                                        ? 'bg-indigo-600 text-white'
+                                        : 'bg-red-100 hover:bg-red-200 text-gray-900'
                                     }`}
                                   >
-                                    {day}
+                                    <div className="flex justify-between items-center">
+                                      <div>
+                                        <div className="font-bold">Week {weekNumber}</div>
+                                        <div className={`text-xs ${
+                                          isSelected ? 'text-white/80' : 'text-gray-600'
+                                        }`}>
+                                          {weekExpenses.length} transaction{weekExpenses.length !== 1 ? 's' : ''}
+                                        </div>
+                                      </div>
+                                      <div className={`text-lg font-bold ${
+                                        isSelected ? 'text-white' : 'text-indigo-600'
+                                      }`}>
+                                        €{weekTotal.toFixed(2)}
+                                      </div>
+                                    </div>
                                   </button>
                                 );
-                              }
-                              
-                              return days;
-                            })()}
+                              })}
+                              {Object.keys(expensesByWeek).length === 0 && (
+                                <p className="text-center text-gray-400 py-4 text-sm">No expenses this month</p>
+                              )}
+                            </div>
                           </div>
-                        </div>
+                        )}
 
                         {/* Expenses by Category */}
                         <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
@@ -949,38 +1047,83 @@ export default function Dashboard() {
 
                       {/* Right Panel: Transaction Details */}
                       <div className="w-1/2 flex flex-col bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
-                        <h4 className="text-md font-bold mb-3">
-                          {selectedReportDate 
-                            ? `Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
-                            : 'Select a day to view transactions'}
-                        </h4>
-                        <div className="flex-1 overflow-y-auto space-y-2">
-                          {selectedReportDate ? (
-                            expensesByDate[selectedReportDate] ? (
-                              expensesByDate[selectedReportDate].map((expense) => (
-                                <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
-                                  <div className="flex items-center gap-3">
-                                    <span className="text-2xl">{getExpenseIcon(expense)}</span>
-                                    <div>
-                                      <div className="font-semibold">{expense.description}</div>
-                                      <div className="text-xs text-gray-500">
-                                        <span className="capitalize">{expense.category}</span>
-                                        {expense.subcategory && (
-                                          <span className="text-indigo-600"> • {expense.subcategory}</span>
-                                        )}
+                        {reportViewMode === 'daily' ? (
+                          <>
+                            <h4 className="text-md font-bold mb-3">
+                              {selectedReportDate 
+                                ? `Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
+                                : 'Select a day to view transactions'}
+                            </h4>
+                            <div className="flex-1 overflow-y-auto space-y-2">
+                              {selectedReportDate ? (
+                                expensesByDate[selectedReportDate] ? (
+                                  expensesByDate[selectedReportDate].map((expense) => (
+                                    <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                      <div className="flex items-center gap-3">
+                                        <span className="text-2xl">{getExpenseIcon(expense)}</span>
+                                        <div>
+                                          <div className="font-semibold">{expense.description}</div>
+                                          <div className="text-xs text-gray-500">
+                                            <span className="capitalize">{expense.category}</span>
+                                            {expense.subcategory && (
+                                              <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                            )}
+                                          </div>
+                                        </div>
                                       </div>
+                                      <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
                                     </div>
-                                  </div>
-                                  <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-center text-gray-400 py-12">No expenses on this day</p>
-                            )
-                          ) : (
-                            <p className="text-center text-gray-400 py-12">👈 Click on a day in the calendar to view its expenses</p>
-                          )}
-                        </div>
+                                  ))
+                                ) : (
+                                  <p className="text-center text-gray-400 py-12">No expenses on this day</p>
+                                )
+                              ) : (
+                                <p className="text-center text-gray-400 py-12">👈 Click on a day in the calendar to view its expenses</p>
+                              )}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h4 className="text-md font-bold mb-3">
+                              {selectedReportDate && selectedReportDate.startsWith('week-')
+                                ? `Transactions for Week ${selectedReportDate.replace('week-', '')}`
+                                : 'Select a week to view transactions'}
+                            </h4>
+                            <div className="flex-1 overflow-y-auto space-y-2">
+                              {selectedReportDate && selectedReportDate.startsWith('week-') ? (
+                                (() => {
+                                  const weekNumber = parseInt(selectedReportDate.replace('week-', ''));
+                                  const weekExpenses = expensesByWeek[weekNumber];
+                                  
+                                  if (weekExpenses && weekExpenses.length > 0) {
+                                    return weekExpenses.map((expense) => (
+                                      <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                        <div className="flex items-center gap-3">
+                                          <span className="text-2xl">{getExpenseIcon(expense)}</span>
+                                          <div>
+                                            <div className="font-semibold">{expense.description}</div>
+                                            <div className="text-xs text-gray-500">
+                                              <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                              <span className="mx-1">•</span>
+                                              <span className="capitalize">{expense.category}</span>
+                                              {expense.subcategory && (
+                                                <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
+                                      </div>
+                                    ));
+                                  }
+                                  return <p className="text-center text-gray-400 py-12">No expenses this week</p>;
+                                })()
+                              ) : (
+                                <p className="text-center text-gray-400 py-12">👈 Click on a week to view its expenses</p>
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </>
                   );
@@ -1153,6 +1296,7 @@ export default function Dashboard() {
                         <option value="appliances">📦 Appliances</option>
                         <option value="home-renovations">🔨 Home Renovations</option>
                         <option value="medicine">💊 Medicine</option>
+                        <option value="vehicle-maintenance">🔧 Vehicle Maintenance</option>
                       </select>
                     </div>
                   </div>
@@ -1293,6 +1437,27 @@ export default function Dashboard() {
                         <option value="">✨ Select Category</option>
                         <option value="adult">👨 Adult</option>
                         <option value="child">👦 Child</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Vehicle Maintenance Subcategory */}
+                  {expenseCategory === 'vehicle-maintenance' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">🔧</span> Maintenance Type
+                      </label>
+                      <select
+                        value={expenseSubcategory}
+                        onChange={(e) => setExpenseSubcategory(e.target.value)}
+                        required
+                        className="w-full px-5 py-3 text-lg border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-gradient-to-r from-white to-blue-50 appearance-none cursor-pointer transition-all font-medium"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%233b82f6\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                      >
+                        <option value="">✨ Select Type</option>
+                        <option value="taxes">💸 Taxes</option>
+                        <option value="general-maintenance">🔧 General Maintenance</option>
+                        <option value="repairs">🔨 Repairs</option>
                       </select>
                     </div>
                   )}
