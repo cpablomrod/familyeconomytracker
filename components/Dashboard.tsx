@@ -111,6 +111,7 @@ export default function Dashboard() {
   const [reportYear, setReportYear] = useState(new Date().getFullYear());
   const [selectedReportDate, setSelectedReportDate] = useState<string | null>(null);
   const [reportViewMode, setReportViewMode] = useState<'daily' | 'weekly'>('daily');
+  const [reportFilterMode, setReportFilterMode] = useState<'all' | 'by-category'>('all');
   
   // Monthly income state
   const [monthlyIncome, setMonthlyIncome] = useState<any>(null);
@@ -1287,23 +1288,174 @@ export default function Dashboard() {
 
                       {/* Right Panel: Transaction Details */}
                       <div className="w-1/2 flex flex-col bg-gray-50 rounded-xl p-4 border-2 border-gray-200">
-                        {reportViewMode === 'daily' ? (
+                        {!selectedReportDate ? (
+                          /* Monthly View - Show all expenses for the month */
+                          <>
+                            <div className="mb-3 space-y-3">
+                              <h4 className="text-md font-bold">
+                                Monthly Expenses - {monthName} {reportYear}
+                              </h4>
+                              
+                              {/* Filter Toggle */}
+                              <div className="inline-flex rounded-lg border-2 border-indigo-500 p-0.5 bg-white">
+                                <button
+                                  onClick={() => setReportFilterMode('all')}
+                                  className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${
+                                    reportFilterMode === 'all'
+                                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
+                                      : 'text-indigo-600 hover:bg-indigo-50'
+                                  }`}
+                                >
+                                  All Sorted
+                                </button>
+                                <button
+                                  onClick={() => setReportFilterMode('by-category')}
+                                  className={`px-4 py-1.5 rounded-md text-sm font-semibold transition-all ${
+                                    reportFilterMode === 'by-category'
+                                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-sm'
+                                      : 'text-indigo-600 hover:bg-indigo-50'
+                                  }`}
+                                >
+                                  By Category
+                                </button>
+                              </div>
+                            </div>
+                            
+                            <div className="flex-1 overflow-y-auto space-y-2">
+                              {selectedExpenses.length === 0 ? (
+                                <p className="text-center text-gray-400 py-12">No expenses this month</p>
+                              ) : reportFilterMode === 'all' ? (
+                                /* All expenses sorted by amount */
+                                [...selectedExpenses].sort((a, b) => b.amount - a.amount).map((expense) => (
+                                  <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-2xl">{getExpenseIcon(expense)}</span>
+                                      <div>
+                                        <div className="font-semibold">{expense.description}</div>
+                                        <div className="text-xs text-gray-500">
+                                          <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                          <span className="mx-1">•</span>
+                                          <span className="capitalize">{expense.category}</span>
+                                          {expense.subcategory && (
+                                            <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
+                                  </div>
+                                ))
+                              ) : (
+                                /* Expenses grouped by category, sorted within each group */
+                                (() => {
+                                  const expensesByCategory: { [key: string]: Expense[] } = {};
+                                  selectedExpenses.forEach(e => {
+                                    if (!expensesByCategory[e.category]) {
+                                      expensesByCategory[e.category] = [];
+                                    }
+                                    expensesByCategory[e.category].push(e);
+                                  });
+                                  
+                                  // Sort categories by total amount
+                                  const sortedCategories = Object.entries(expensesByCategory)
+                                    .sort((a, b) => {
+                                      const totalA = a[1].reduce((sum, e) => sum + e.amount, 0);
+                                      const totalB = b[1].reduce((sum, e) => sum + e.amount, 0);
+                                      return totalB - totalA;
+                                    });
+                                  
+                                  return sortedCategories.map(([category, categoryExpenses]) => {
+                                    const categoryTotal = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
+                                    const sortedExpenses = [...categoryExpenses].sort((a, b) => b.amount - a.amount);
+                                    
+                                    return (
+                                      <div key={category} className="mb-4">
+                                        <div className="flex items-center justify-between p-2 bg-indigo-100 rounded-t-lg border-b-2 border-indigo-300 sticky top-0">
+                                          <div className="flex items-center gap-2">
+                                            <span className="text-xl">{categoryEmojis[category]}</span>
+                                            <span className="font-bold capitalize text-sm">{category}</span>
+                                          </div>
+                                          <span className="text-sm font-bold text-indigo-700">€{categoryTotal.toFixed(2)}</span>
+                                        </div>
+                                        <div className="space-y-1">
+                                          {sortedExpenses.map((expense) => (
+                                            <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm ml-2 mr-1">
+                                              <div className="flex items-center gap-3">
+                                                <span className="text-xl">{getExpenseIcon(expense)}</span>
+                                                <div>
+                                                  <div className="font-semibold text-sm">{expense.description}</div>
+                                                  <div className="text-xs text-gray-500">
+                                                    <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                                    {expense.subcategory && (
+                                                      <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <span className="text-base font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    );
+                                  });
+                                })()
+                              )}
+                            </div>
+                          </>
+                        ) : reportViewMode === 'daily' ? (
+                          /* Daily View - Show expenses for selected day */
                           <>
                             <h4 className="text-md font-bold mb-3">
-                              {selectedReportDate 
-                                ? `Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`
-                                : 'Select a day to view transactions'}
+                              {`Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
                             </h4>
                             <div className="flex-1 overflow-y-auto space-y-2">
-                              {selectedReportDate ? (
-                                expensesByDate[selectedReportDate] ? (
-                                  expensesByDate[selectedReportDate].map((expense) => (
+                              {expensesByDate[selectedReportDate] ? (
+                                expensesByDate[selectedReportDate].map((expense) => (
+                                  <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-2xl">{getExpenseIcon(expense)}</span>
+                                      <div>
+                                        <div className="font-semibold">{expense.description}</div>
+                                        <div className="text-xs text-gray-500">
+                                          <span className="capitalize">{expense.category}</span>
+                                          {expense.subcategory && (
+                                            <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
+                                  </div>
+                                ))
+                              ) : (
+                                <p className="text-center text-gray-400 py-12">No expenses on this day</p>
+                              )}
+                            </div>
+                          </>
+                        ) : (
+                          /* Weekly View - Show expenses for selected week */
+                          <>
+                            <h4 className="text-md font-bold mb-3">
+                              {selectedReportDate.startsWith('week-')
+                                ? `Transactions for Week ${selectedReportDate.replace('week-', '')}`
+                                : 'Select a week to view transactions'}
+                            </h4>
+                            <div className="flex-1 overflow-y-auto space-y-2">
+                              {selectedReportDate.startsWith('week-') && (() => {
+                                const weekNumber = parseInt(selectedReportDate.replace('week-', ''));
+                                const weekExpenses = expensesByWeek[weekNumber];
+                                
+                                if (weekExpenses && weekExpenses.length > 0) {
+                                  return weekExpenses.map((expense) => (
                                     <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
                                       <div className="flex items-center gap-3">
                                         <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                         <div>
                                           <div className="font-semibold">{expense.description}</div>
                                           <div className="text-xs text-gray-500">
+                                            <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                            <span className="mx-1">•</span>
                                             <span className="capitalize">{expense.category}</span>
                                             {expense.subcategory && (
                                               <span className="text-indigo-600"> • {expense.subcategory}</span>
@@ -1313,54 +1465,10 @@ export default function Dashboard() {
                                       </div>
                                       <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
                                     </div>
-                                  ))
-                                ) : (
-                                  <p className="text-center text-gray-400 py-12">No expenses on this day</p>
-                                )
-                              ) : (
-                                <p className="text-center text-gray-400 py-12">👈 Click on a day in the calendar to view its expenses</p>
-                              )}
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <h4 className="text-md font-bold mb-3">
-                              {selectedReportDate && selectedReportDate.startsWith('week-')
-                                ? `Transactions for Week ${selectedReportDate.replace('week-', '')}`
-                                : 'Select a week to view transactions'}
-                            </h4>
-                            <div className="flex-1 overflow-y-auto space-y-2">
-                              {selectedReportDate && selectedReportDate.startsWith('week-') ? (
-                                (() => {
-                                  const weekNumber = parseInt(selectedReportDate.replace('week-', ''));
-                                  const weekExpenses = expensesByWeek[weekNumber];
-                                  
-                                  if (weekExpenses && weekExpenses.length > 0) {
-                                    return weekExpenses.map((expense) => (
-                                      <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
-                                        <div className="flex items-center gap-3">
-                                          <span className="text-2xl">{getExpenseIcon(expense)}</span>
-                                          <div>
-                                            <div className="font-semibold">{expense.description}</div>
-                                            <div className="text-xs text-gray-500">
-                                              <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                              <span className="mx-1">•</span>
-                                              <span className="capitalize">{expense.category}</span>
-                                              {expense.subcategory && (
-                                                <span className="text-indigo-600"> • {expense.subcategory}</span>
-                                              )}
-                                            </div>
-                                          </div>
-                                        </div>
-                                        <span className="text-lg font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
-                                      </div>
-                                    ));
-                                  }
-                                  return <p className="text-center text-gray-400 py-12">No expenses this week</p>;
-                                })()
-                              ) : (
-                                <p className="text-center text-gray-400 py-12">👈 Click on a week to view its expenses</p>
-                              )}
+                                  ));
+                                }
+                                return <p className="text-center text-gray-400 py-12">No expenses this week</p>;
+                              })()}
                             </div>
                           </>
                         )}
