@@ -1085,7 +1085,7 @@ export default function Dashboard() {
                     <select
                       value={reportMonth}
                       onChange={(e) => { setReportMonth(parseInt(e.target.value)); setSelectedReportDate(null); }}
-                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                      className="w-full px-4 py-3 text-gray-900 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
                     >
                       {['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'].map((month, idx) => (
                         <option key={idx} value={idx}>{month}</option>
@@ -1099,7 +1099,7 @@ export default function Dashboard() {
                     <select
                       value={reportYear}
                       onChange={(e) => { setReportYear(parseInt(e.target.value)); setSelectedReportDate(null); }}
-                      className="w-full px-4 py-3 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
+                      className="w-full px-4 py-3 text-gray-900 border-2 border-indigo-200 rounded-xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none bg-gradient-to-r from-white to-indigo-50 font-medium"
                     >
                       {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map((year) => (
                         <option key={year} value={year}>{year}</option>
