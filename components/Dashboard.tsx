@@ -1184,7 +1184,7 @@ export default function Dashboard() {
                         {/* Daily/Weekly Selector */}
                         {reportViewMode === 'daily' ? (
                           <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
-                            <h4 className="text-md font-bold mb-3">Select Day</h4>
+                            <h4 className="text-md font-bold text-gray-900 mb-3">Select Day</h4>
                             <div className="grid grid-cols-7 gap-1">
                               {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
                                 <div key={i} className="text-center text-xs font-semibold text-gray-500 py-1">
@@ -1229,7 +1229,7 @@ export default function Dashboard() {
                           </div>
                         ) : (
                           <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
-                            <h4 className="text-md font-bold mb-3">Select Week</h4>
+                            <h4 className="text-md font-bold text-gray-900 mb-3">Select Week</h4>
                             <div className="space-y-2">
                               {Object.keys(expensesByWeek).sort((a, b) => parseInt(a) - parseInt(b)).map((weekNum) => {
                                 const weekNumber = parseInt(weekNum);
@@ -1274,7 +1274,7 @@ export default function Dashboard() {
 
                         {/* Expenses by Category */}
                         <div className="bg-white rounded-xl p-4 border-2 border-gray-200">
-                          <h4 className="text-md font-bold mb-3">Expenses by Category</h4>
+                          <h4 className="text-md font-bold text-gray-900 mb-3">Expenses by Category</h4>
                           <div className="space-y-2">
                             {Object.entries(categoryTotals).length === 0 ? (
                               <p className="text-center text-gray-400 py-4 text-sm">No expenses this month</p>
@@ -1283,7 +1283,7 @@ export default function Dashboard() {
                                 <div key={category} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
                                   <div className="flex items-center gap-2">
                                     <span className="text-xl">{categoryEmojis[category]}</span>
-                                    <span className="font-semibold capitalize text-sm">{category}</span>
+                                    <span className="font-semibold capitalize text-sm text-gray-900">{category}</span>
                                   </div>
                                   <span className="text-sm font-bold text-indigo-600">€{amount.toFixed(2)}</span>
                                 </div>
