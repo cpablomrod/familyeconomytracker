@@ -1307,7 +1307,7 @@ export default function Dashboard() {
                           /* Monthly View - Show all expenses for the month */
                           <>
                             <div className="mb-3 space-y-3">
-                              <h4 className="text-md font-bold">
+                              <h4 className="text-md font-bold text-gray-900">
                                 Monthly Expenses - {monthName} {reportYear}
                               </h4>
                               
@@ -1346,7 +1346,7 @@ export default function Dashboard() {
                                     <div className="flex items-center gap-3">
                                       <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                       <div>
-                                        <div className="font-semibold">{expense.description}</div>
+                                        <div className="font-semibold text-gray-900">{expense.description}</div>
                                         <div className="text-xs text-gray-500">
                                           <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                                           <span className="mx-1">•</span>
@@ -1388,7 +1388,7 @@ export default function Dashboard() {
                                         <div className="flex items-center justify-between p-2 bg-indigo-100 rounded-t-lg border-b-2 border-indigo-300 sticky top-0">
                                           <div className="flex items-center gap-2">
                                             <span className="text-xl">{categoryEmojis[category]}</span>
-                                            <span className="font-bold capitalize text-sm">{category}</span>
+                                            <span className="font-bold capitalize text-sm text-gray-900">{category}</span>
                                           </div>
                                           <span className="text-sm font-bold text-indigo-700">€{categoryTotal.toFixed(2)}</span>
                                         </div>
@@ -1398,7 +1398,7 @@ export default function Dashboard() {
                                               <div className="flex items-center gap-3">
                                                 <span className="text-xl">{getExpenseIcon(expense)}</span>
                                                 <div>
-                                                  <div className="font-semibold text-sm">{expense.description}</div>
+                                                  <div className="font-semibold text-sm text-gray-900">{expense.description}</div>
                                                   <div className="text-xs text-gray-500">
                                                     <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                                                     {expense.subcategory && (
@@ -1421,7 +1421,7 @@ export default function Dashboard() {
                         ) : reportViewMode === 'daily' ? (
                           /* Daily View - Show expenses for selected day */
                           <>
-                            <h4 className="text-md font-bold mb-3">
+                            <h4 className="text-md font-bold text-gray-900 mb-3">
                               {`Transactions on ${new Date(selectedReportDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}`}
                             </h4>
                             <div className="flex-1 overflow-y-auto space-y-2">
@@ -1431,7 +1431,7 @@ export default function Dashboard() {
                                     <div className="flex items-center gap-3">
                                       <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                       <div>
-                                        <div className="font-semibold">{expense.description}</div>
+                                        <div className="font-semibold text-gray-900">{expense.description}</div>
                                         <div className="text-xs text-gray-500">
                                           <span className="capitalize">{expense.category}</span>
                                           {expense.subcategory && (
@@ -1451,7 +1451,7 @@ export default function Dashboard() {
                         ) : (
                           /* Weekly View - Show expenses for selected week */
                           <>
-                            <h4 className="text-md font-bold mb-3">
+                            <h4 className="text-md font-bold text-gray-900 mb-3">
                               {selectedReportDate.startsWith('week-')
                                 ? `Transactions for Week ${selectedReportDate.replace('week-', '')}`
                                 : 'Select a week to view transactions'}
@@ -1467,7 +1467,7 @@ export default function Dashboard() {
                                       <div className="flex items-center gap-3">
                                         <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                         <div>
-                                          <div className="font-semibold">{expense.description}</div>
+                                          <div className="font-semibold text-gray-900">{expense.description}</div>
                                           <div className="text-xs text-gray-500">
                                             <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
                                             <span className="mx-1">•</span>
