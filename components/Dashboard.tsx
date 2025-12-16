@@ -886,15 +886,15 @@ export default function Dashboard() {
                 <div className="pt-4 border-t-2 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Fixed Payments:</span>
-                    <span className="font-bold text-lg">€{financials.totalFixedPayments.toFixed(2)}</span>
+                    <span className="font-bold text-lg text-gray-900">€{financials.totalFixedPayments.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Property/Loans:</span>
-                    <span className="font-bold text-lg">€{(financials.totalPropertyPayments + financials.totalLoanPayments).toFixed(2)}</span>
+                    <span className="font-bold text-lg text-gray-900">€{(financials.totalPropertyPayments + financials.totalLoanPayments).toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">{viewMode === 'monthly' ? 'Monthly' : 'Yearly'} Expenses:</span>
-                    <span className="font-bold text-lg">€{viewMode === 'monthly' ? financials.expenseTotals.month.toFixed(2) : financials.expenseTotals.year.toFixed(2)}</span>
+                    <span className="font-bold text-lg text-gray-900">€{viewMode === 'monthly' ? financials.expenseTotals.month.toFixed(2) : financials.expenseTotals.year.toFixed(2)}</span>
                   </div>
                 </div>
                 
