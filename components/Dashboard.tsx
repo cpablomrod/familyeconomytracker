@@ -42,6 +42,9 @@ const categoryEmojis: { [key: string]: string } = {
   'home-renovations': '🔨',
   medicine: '💊',
   'vehicle-maintenance': '🔧',
+  'personal-care': '🧴',
+  taxes: '💰',
+  sports: '⚽',
 };
 
 const subcategoryEmojis: { [key: string]: string } = {
@@ -61,8 +64,9 @@ const subcategoryEmojis: { [key: string]: string } = {
   cheese: '🧀',
   jam: '🍯',
   cereals: '🥣',
-  protein: '🥤',
+  protein: '💪',
   drinks: '🥤',
+  'snacks-chips': '🍿',
   // Gasoline subcategories
   diesel: '⛽',
   gasoline: '⛽',
@@ -86,6 +90,16 @@ const subcategoryEmojis: { [key: string]: string } = {
   taxes: '💸',
   'general-maintenance': '🔧',
   repairs: '🔨',
+  // Personal Care subcategories
+  woman: '💄',
+  men: '🧔',
+  // Taxes subcategories
+  properties: '🏠',
+  vehicles: '🚗',
+  // Sports subcategories
+  clothing: '👟',
+  courts: '🎾',
+  accessories: '🎽',
 };
 
 const getExpenseIcon = (expense: Expense): string => {
@@ -583,8 +597,9 @@ export default function Dashboard() {
     if (!family?.ages || family.ages.length === 0) return null;
     
     return family.ages.map((age, index) => {
-      const gender = family.genders?.[index] || 'male';
-      const isMale = gender === 'male';
+      const gender = (family.genders?.[index] || 'male').toLowerCase();
+      // Check if gender indicates male (handles: male, m, boy)
+      const isMale = ['male', 'm', 'boy'].includes(gender);
       
       if (age <= 2) return '👶'; // Baby (gender neutral)
       if (age <= 12) return isMale ? '👦' : '👧'; // Boy or Girl
@@ -607,7 +622,7 @@ export default function Dashboard() {
               <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 rounded-full border border-indigo-200">
                 <span className="text-sm font-bold text-indigo-700">Family:</span>
                 {getFamilyMemberEmojis()?.map((emoji, idx) => (
-                  <span key={idx} className="text-2xl">{emoji}</span>
+                  <span key={idx} className="text-4xl">{emoji}</span>
                 ))}
               </div>
             )}
@@ -1645,6 +1660,9 @@ export default function Dashboard() {
                         <option value="home-renovations">🔨 Home Renovations</option>
                         <option value="medicine">💊 Medicine</option>
                         <option value="vehicle-maintenance">🔧 Vehicle Maintenance</option>
+                        <option value="personal-care">🧴 Personal Care</option>
+                        <option value="taxes">💰 Taxes</option>
+                        <option value="sports">⚽ Sports</option>
                       </select>
                     </div>
                   </div>
@@ -1680,6 +1698,7 @@ export default function Dashboard() {
                         <option value="cereals">🥣 Cereals</option>
                         <option value="protein">🥤 Protein</option>
                         <option value="drinks">🥤 Drinks</option>
+                        <option value="snacks-chips">🍿 Snacks/Chips</option>
                         <option value="other">🍽️ Other</option>
                       </select>
                     </div>
@@ -1806,6 +1825,67 @@ export default function Dashboard() {
                         <option value="taxes">💸 Taxes</option>
                         <option value="general-maintenance">🔧 General Maintenance</option>
                         <option value="repairs">🔨 Repairs</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Personal Care Subcategory */}
+                  {expenseCategory === 'personal-care' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">🧴</span> For Whom
+                      </label>
+                      <select
+                        value={expenseSubcategory}
+                        onChange={(e) => setExpenseSubcategory(e.target.value)}
+                        required
+                        className="w-full px-5 py-3 text-lg border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none bg-gradient-to-r from-white to-purple-50 appearance-none cursor-pointer transition-all font-medium"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23a855f7\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                      >
+                        <option value="">✨ Select Category</option>
+                        <option value="woman">💄 Woman</option>
+                        <option value="men">🧔 Men</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Taxes Subcategory */}
+                  {expenseCategory === 'taxes' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">💰</span> Tax Type
+                      </label>
+                      <select
+                        value={expenseSubcategory}
+                        onChange={(e) => setExpenseSubcategory(e.target.value)}
+                        required
+                        className="w-full px-5 py-3 text-lg border-2 border-green-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none bg-gradient-to-r from-white to-green-50 appearance-none cursor-pointer transition-all font-medium"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%2310b981\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                      >
+                        <option value="">✨ Select Tax Type</option>
+                        <option value="properties">🏠 Properties</option>
+                        <option value="vehicles">🚗 Vehicles</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {/* Sports Subcategory */}
+                  {expenseCategory === 'sports' && (
+                    <div className="animate-fadeIn">
+                      <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                        <span className="text-lg">⚽</span> Sports Type
+                      </label>
+                      <select
+                        value={expenseSubcategory}
+                        onChange={(e) => setExpenseSubcategory(e.target.value)}
+                        required
+                        className="w-full px-5 py-3 text-lg border-2 border-orange-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none bg-gradient-to-r from-white to-orange-50 appearance-none cursor-pointer transition-all font-medium"
+                        style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23f97316\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
+                      >
+                        <option value="">✨ Select Sports Type</option>
+                        <option value="clothing">👟 Clothing</option>
+                        <option value="courts">🎾 Courts</option>
+                        <option value="accessories">🎽 Accessories</option>
                       </select>
                     </div>
                   )}
