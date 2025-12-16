@@ -126,6 +126,7 @@ export default function Dashboard() {
   const [selectedReportDate, setSelectedReportDate] = useState<string | null>(null);
   const [reportViewMode, setReportViewMode] = useState<'daily' | 'weekly'>('daily');
   const [reportFilterMode, setReportFilterMode] = useState<'all' | 'by-category'>('all');
+  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set());
   
   // Monthly income state
   const [monthlyIncome, setMonthlyIncome] = useState<any>(null);
@@ -1382,35 +1383,51 @@ export default function Dashboard() {
                                   return sortedCategories.map(([category, categoryExpenses]) => {
                                     const categoryTotal = categoryExpenses.reduce((sum, e) => sum + e.amount, 0);
                                     const sortedExpenses = [...categoryExpenses].sort((a, b) => b.amount - a.amount);
+                                    const isExpanded = expandedCategories.has(category);
                                     
                                     return (
-                                      <div key={category} className="mb-4">
-                                        <div className="flex items-center justify-between p-2 bg-indigo-100 rounded-t-lg border-b-2 border-indigo-300 sticky top-0">
+                                      <div key={category} className="mb-2">
+                                        <button
+                                          onClick={() => {
+                                            const newExpanded = new Set(expandedCategories);
+                                            if (isExpanded) {
+                                              newExpanded.delete(category);
+                                            } else {
+                                              newExpanded.add(category);
+                                            }
+                                            setExpandedCategories(newExpanded);
+                                          }}
+                                          className="w-full flex items-center justify-between p-3 bg-indigo-100 rounded-lg border-2 border-indigo-300 hover:bg-indigo-200 transition cursor-pointer"
+                                        >
                                           <div className="flex items-center gap-2">
+                                            <span className="text-lg">{isExpanded ? '▼' : '▶'}</span>
                                             <span className="text-xl">{categoryEmojis[category]}</span>
                                             <span className="font-bold capitalize text-sm text-gray-900">{category}</span>
+                                            <span className="text-xs text-gray-600">({sortedExpenses.length})</span>
                                           </div>
                                           <span className="text-sm font-bold text-indigo-700">€{categoryTotal.toFixed(2)}</span>
-                                        </div>
-                                        <div className="space-y-1">
-                                          {sortedExpenses.map((expense) => (
-                                            <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm ml-2 mr-1">
-                                              <div className="flex items-center gap-3">
-                                                <span className="text-xl">{getExpenseIcon(expense)}</span>
-                                                <div>
-                                                  <div className="font-semibold text-sm text-gray-900">{expense.description}</div>
-                                                  <div className="text-xs text-gray-500">
-                                                    <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
-                                                    {expense.subcategory && (
-                                                      <span className="text-indigo-600"> • {expense.subcategory}</span>
-                                                    )}
+                                        </button>
+                                        {isExpanded && (
+                                          <div className="space-y-1 mt-1 ml-4">
+                                            {sortedExpenses.map((expense) => (
+                                              <div key={expense._id} className="flex items-center justify-between p-3 bg-white rounded-lg shadow-sm">
+                                                <div className="flex items-center gap-3">
+                                                  <span className="text-xl">{getExpenseIcon(expense)}</span>
+                                                  <div>
+                                                    <div className="font-semibold text-sm text-gray-900">{expense.description}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                      <span>{new Date(expense.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</span>
+                                                      {expense.subcategory && (
+                                                        <span className="text-indigo-600"> • {expense.subcategory}</span>
+                                                      )}
+                                                    </div>
                                                   </div>
                                                 </div>
+                                                <span className="text-base font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
                                               </div>
-                                              <span className="text-base font-bold text-indigo-600">€{expense.amount.toFixed(2)}</span>
-                                            </div>
-                                          ))}
-                                        </div>
+                                            ))}
+                                          </div>
+                                        )}
                                       </div>
                                     );
                                   });
