@@ -1920,7 +1920,7 @@ export default function Dashboard() {
                   if (dayExpenses.length > 0) {
                     return (
                       <div className="mt-6">
-                        <h4 className="font-semibold mb-3">Expenses for this day:</h4>
+                        <h4 className="font-semibold text-gray-900 mb-3">Expenses for this day:</h4>
                         <div className="space-y-2">
                           {dayExpenses.map((expense) => (
                             <div
@@ -1930,7 +1930,7 @@ export default function Dashboard() {
                               <div className="flex items-center gap-3">
                                 <span className="text-2xl">{getExpenseIcon(expense)}</span>
                                 <div>
-                                  <div className="font-semibold">{expense.description}</div>
+                                  <div className="font-semibold text-gray-900">{expense.description}</div>
                                   <div className="text-sm text-gray-600">
                                     <span className="capitalize">{expense.category}</span>
                                     {expense.subcategory && (
