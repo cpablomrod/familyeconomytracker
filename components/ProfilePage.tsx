@@ -370,14 +370,14 @@ export default function ProfilePage() {
                         placeholder="Source (e.g., Salary, Freelance)"
                         value={stream.source}
                         onChange={(e) => updateIncomeStream(index, 'source', e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="flex-1 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="number"
                         placeholder="Amount"
                         value={stream.amount || ''}
                         onChange={(e) => updateIncomeStream(index, 'amount', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-40 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <button
                         onClick={() => removeIncomeStream(index)}
@@ -422,14 +422,14 @@ export default function ProfilePage() {
                         placeholder="Payment name (e.g., Rent, Insurance)"
                         value={payment.name}
                         onChange={(e) => updateFixedPayment(index, 'name', e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="flex-1 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="number"
                         placeholder="Amount"
                         value={payment.amount || ''}
                         onChange={(e) => updateFixedPayment(index, 'amount', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-40 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <button
                         onClick={() => removeFixedPayment(index)}
@@ -474,21 +474,21 @@ export default function ProfilePage() {
                         placeholder="Property name"
                         value={property.name}
                         onChange={(e) => updateProperty(index, 'name', e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="flex-1 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="number"
                         placeholder="Value"
                         value={property.value || ''}
                         onChange={(e) => updateProperty(index, 'value', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-40 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="number"
                         placeholder="Monthly Payment"
                         value={property.monthlyPayment || ''}
                         onChange={(e) => updateProperty(index, 'monthlyPayment', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-40 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <button
                         onClick={() => removeProperty(index)}
@@ -533,21 +533,21 @@ export default function ProfilePage() {
                         placeholder="Loan name"
                         value={loan.name}
                         onChange={(e) => updateLoan(index, 'name', e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="flex-1 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="number"
                         placeholder="Monthly Amount"
                         value={loan.monthlyAmount || ''}
                         onChange={(e) => updateLoan(index, 'monthlyAmount', parseFloat(e.target.value) || 0)}
-                        className="w-40 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-40 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <input
                         type="date"
                         placeholder="End Date"
                         value={loan.endDate}
                         onChange={(e) => updateLoan(index, 'endDate', e.target.value)}
-                        className="w-48 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                        className="w-48 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                       />
                       <button
                         onClick={() => removeLoan(index)}
@@ -628,7 +628,7 @@ export default function ProfilePage() {
                               updated[index] = { ...updated[index], type: newType, category: '' };
                               setEconomicTargets(updated);
                             }}
-                            className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                            className="w-full px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                           >
                             <option value="expense">💪 Expense Limit</option>
                             <option value="savings">💰 Savings Goal</option>
@@ -641,7 +641,7 @@ export default function ProfilePage() {
                           <select
                             value={target.category || ''}
                             onChange={(e) => updateEconomicTarget(index, 'category', e.target.value)}
-                            className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                            className="w-full px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                           >
                             <option value="">Select category...</option>
                             {(targetType === 'expense' ? expenseCategories : savingsCategories).map(cat => (
@@ -658,7 +658,7 @@ export default function ProfilePage() {
                           placeholder={targetType === 'expense' ? 'e.g., Reduce food expenses' : 'e.g., Save for holidays'}
                           value={target.description}
                           onChange={(e) => updateEconomicTarget(index, 'description', e.target.value)}
-                          className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                          className="flex-1 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                         />
                         
                         {/* Target Amount */}
@@ -667,7 +667,7 @@ export default function ProfilePage() {
                           placeholder="Amount"
                           value={target.targetAmount || ''}
                           onChange={(e) => updateEconomicTarget(index, 'targetAmount', parseFloat(e.target.value) || 0)}
-                          className="w-32 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
+                          className="w-32 px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-600 focus:outline-none"
                         />
                         
                         {/* Remove Button */}

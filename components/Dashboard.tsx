@@ -640,7 +640,7 @@ export default function Dashboard() {
             <span className="font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">{family.name}</span>
             <button
               onClick={handleLogout}
-              className="px-3 py-1.5 text-sm bg-white/50 rounded-lg hover:bg-white/80 transition border border-gray-200"
+              className="px-3 py-1.5 text-sm text-gray-900 bg-white/50 rounded-lg hover:bg-white/80 transition border border-gray-200"
             >
               Logout
             </button>
@@ -962,7 +962,7 @@ export default function Dashboard() {
                           setIncomeEntries(newEntries);
                         }}
                         placeholder="e.g., Salary, Freelance, etc."
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+                        className="w-full px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
                       />
                     </div>
                     <div className="w-40">
@@ -979,7 +979,7 @@ export default function Dashboard() {
                           newEntries[index].amount = parseFloat(e.target.value) || 0;
                           setIncomeEntries(newEntries);
                         }}
-                        className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
+                        className="w-full px-4 py-2 text-gray-900 border-2 border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none"
                       />
                     </div>
                     <button
