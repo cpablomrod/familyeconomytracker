@@ -41,7 +41,7 @@ const categoryEmojis: { [key: string]: string } = {
   appliances: '📦',
   'home-renovations': '🔨',
   medicine: '💊',
-  'vehicle-maintenance': '🔧',
+  vehicles: '🚗',
   'personal-care': '🧴',
   taxes: '💰',
   sports: '⚽',
@@ -1677,7 +1677,7 @@ export default function Dashboard() {
                         <option value="appliances">📦 Appliances</option>
                         <option value="home-renovations">🔨 Home Renovations</option>
                         <option value="medicine">💊 Medicine</option>
-                        <option value="vehicle-maintenance">🔧 Vehicle Maintenance</option>
+                        <option value="vehicle">🚗 Vehicle</option>
                         <option value="personal-care">🧴 Personal Care</option>
                         <option value="taxes">💰 Taxes</option>
                         <option value="sports">⚽ Sports</option>
@@ -1827,11 +1827,11 @@ export default function Dashboard() {
                     </div>
                   )}
 
-                  {/* Vehicle Maintenance Subcategory */}
-                  {expenseCategory === 'vehicle-maintenance' && (
+                  {/* Vehicle Subcategory */}
+                  {expenseCategory === 'vehicle' && (
                     <div className="animate-fadeIn">
                       <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                        <span className="text-lg">🔧</span> Maintenance Type
+                        <span className="text-lg">🚗</span> Vehicle Type
                       </label>
                       <select
                         value={expenseSubcategory}
