@@ -67,6 +67,7 @@ const subcategoryEmojis: { [key: string]: string } = {
   protein: '💪',
   drinks: '🥤',
   'snacks-chips': '🍿',
+  desserts: '🍰',
   // Gasoline subcategories
   diesel: '⛽',
   gasoline: '⛽',
@@ -1713,9 +1714,10 @@ export default function Dashboard() {
                         <option value="cheese">🧀 Cheese</option>
                         <option value="jam">🍯 Jam</option>
                         <option value="cereals">🥣 Cereals</option>
-                        <option value="protein">🥤 Protein</option>
+                        <option value="protein">💪 Protein</option>
                         <option value="drinks">🥤 Drinks</option>
                         <option value="snacks-chips">🍿 Snacks/Chips</option>
+                        <option value="desserts">🍰 Desserts</option>
                         <option value="other">🍽️ Other</option>
                       </select>
                     </div>
