@@ -1694,7 +1694,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-green-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none bg-gradient-to-r from-white to-green-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%2310b981\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1732,7 +1731,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-yellow-200 rounded-xl focus:border-yellow-500 focus:ring-2 focus:ring-yellow-200 focus:outline-none bg-gradient-to-r from-white to-yellow-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23eab308\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1752,7 +1750,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-gradient-to-r from-white to-blue-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%233b82f6\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1773,7 +1770,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-orange-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none bg-gradient-to-r from-white to-orange-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23f97316\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1795,7 +1791,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-pink-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-200 focus:outline-none bg-gradient-to-r from-white to-pink-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23ec4899\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1816,7 +1811,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-red-200 rounded-xl focus:border-red-500 focus:ring-2 focus:ring-red-200 focus:outline-none bg-gradient-to-r from-white to-red-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23ef4444\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1836,7 +1830,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-blue-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-gradient-to-r from-white to-blue-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%233b82f6\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1857,7 +1850,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-purple-200 rounded-xl focus:border-purple-500 focus:ring-2 focus:ring-purple-200 focus:outline-none bg-gradient-to-r from-white to-purple-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23a855f7\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1877,7 +1869,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-green-200 rounded-xl focus:border-green-500 focus:ring-2 focus:ring-green-200 focus:outline-none bg-gradient-to-r from-white to-green-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%2310b981\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
@@ -1897,7 +1888,6 @@ export default function Dashboard() {
                       <select
                         value={expenseSubcategory}
                         onChange={(e) => setExpenseSubcategory(e.target.value)}
-                        required
                         className="w-full px-5 py-3 text-lg text-gray-900 border-2 border-orange-200 rounded-xl focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-none bg-gradient-to-r from-white to-orange-50 appearance-none cursor-pointer transition-all font-medium"
                         style={{ backgroundImage: 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 20 20\'%3e%3cpath stroke=\'%23f97316\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M6 8l4 4 4-4\'/%3e%3c/svg%3e")', backgroundPosition: 'right 0.5rem center', backgroundRepeat: 'no-repeat', backgroundSize: '1.5em 1.5em', paddingRight: '2.5rem' }}
                       >
